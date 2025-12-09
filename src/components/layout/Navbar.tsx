@@ -67,7 +67,7 @@ export function Navbar({ onSearch }: NavbarProps) {
                 <Calendar className="h-5 w-5 text-primary-foreground" />
               </div>
               <span className="hidden text-xl font-semibold text-foreground sm:block">
-                TeamPresence
+                Overlabs Presence
               </span>
             </Link>
           </div>
