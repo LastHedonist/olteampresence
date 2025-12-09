@@ -106,7 +106,7 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
 
               {/* Status indicators */}
               {hasData && (
-                <div className="mt-auto flex flex-wrap gap-0.5">
+                <div className="mt-auto flex flex-wrap gap-1">
                   {(Object.entries(stats) as [LocationStatus, number][])
                     .filter(([_, count]) => count > 0)
                     .map(([status, count]) => {
@@ -119,11 +119,12 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
                           <TooltipTrigger asChild>
                             <div
                               className={cn(
-                                'flex h-4 min-w-4 items-center justify-center rounded-sm px-0.5 text-[10px] font-medium text-primary-foreground',
+                                'flex h-5 min-w-5 items-center justify-center gap-0.5 rounded px-1 text-xs font-semibold text-white shadow-sm transition-transform hover:scale-110',
                                 STATUS_COLORS[status]
                               )}
                             >
-                              {count}
+                              <Icon className="h-3 w-3" />
+                              <span>{count}</span>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-xs">
