@@ -116,13 +116,9 @@ export function Navbar({ onSearch }: NavbarProps) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Perfil</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Configurações</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
@@ -178,13 +174,9 @@ export function Navbar({ onSearch }: NavbarProps) {
                   </Link>
                 </Button>
               )}
-              <Button variant="ghost" className="justify-start">
+              <Button variant="ghost" className="justify-start" onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>
                 <User className="mr-2 h-4 w-4" />
                 Perfil
-              </Button>
-              <Button variant="ghost" className="justify-start">
-                <Settings className="mr-2 h-4 w-4" />
-                Configurações
               </Button>
               <Button
                 variant="ghost"
