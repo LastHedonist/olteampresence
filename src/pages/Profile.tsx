@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -10,12 +10,27 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+
+const profileSchema = z.object({
+  fullName: z.string().trim().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
+  jobFunction: z.string().trim().min(1, 'Função é obrigatória').max(100, 'Função muito longa'),
+});
 
 export default function Profile() {
   const { user, profile, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState(profile?.full_name || '');
+  const [fullName, setFullName] = useState('');
+  const [jobFunction, setJobFunction] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState<{ fullName?: string; jobFunction?: string }>({});
+
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.full_name || '');
+      setJobFunction(profile.job_function || '');
+    }
+  }, [profile]);
 
   if (authLoading) {
     return (
@@ -44,11 +59,27 @@ export default function Profile() {
   const handleSave = async () => {
     if (!user) return;
 
+    setErrors({});
+    
+    const result = profileSchema.safeParse({ fullName, jobFunction });
+    if (!result.success) {
+      const fieldErrors: { fullName?: string; jobFunction?: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0] === 'fullName') fieldErrors.fullName = err.message;
+        if (err.path[0] === 'jobFunction') fieldErrors.jobFunction = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
     setIsSaving(true);
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ full_name: fullName })
+        .update({ 
+          full_name: fullName.trim(),
+          job_function: jobFunction.trim()
+        })
         .eq('id', user.id);
 
       if (error) throw error;
@@ -92,19 +123,38 @@ export default function Profile() {
               </Avatar>
               <div className="space-y-1">
                 <p className="text-lg font-medium">{profile?.full_name}</p>
-                <p className="text-sm text-muted-foreground">{profile?.email}</p>
+                <p className="text-sm text-muted-foreground">{profile?.job_function}</p>
+                <p className="text-xs text-muted-foreground">{profile?.email}</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Nome Completo</Label>
+                <Label htmlFor="fullName">Nome Completo *</Label>
                 <Input
                   id="fullName"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Seu nome completo"
+                  className={errors.fullName ? 'border-destructive' : ''}
                 />
+                {errors.fullName && (
+                  <p className="text-xs text-destructive">{errors.fullName}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="jobFunction">Função *</Label>
+                <Input
+                  id="jobFunction"
+                  value={jobFunction}
+                  onChange={(e) => setJobFunction(e.target.value)}
+                  placeholder="Ex: Desenvolvedor, Designer, Gerente"
+                  className={errors.jobFunction ? 'border-destructive' : ''}
+                />
+                {errors.jobFunction && (
+                  <p className="text-xs text-destructive">{errors.jobFunction}</p>
+                )}
               </div>
 
               <div className="space-y-2">
