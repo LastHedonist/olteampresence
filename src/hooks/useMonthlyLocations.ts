@@ -31,13 +31,13 @@ export function useMonthlyLocations(monthOffset: number = 0) {
 
       if (locationsError) throw locationsError;
 
+      // Fetch all active profiles using secure function (excludes email)
       const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
+        .rpc('get_team_profiles');
 
       if (profilesError) throw profilesError;
 
-      const usersWithLocations: UserWithLocations[] = profilesData.map((profile) => {
+      const usersWithLocations: UserWithLocations[] = (profilesData || []).map((profile) => {
         const userLocations: Record<string, LocationStatus> = {};
         locationsData
           ?.filter((loc) => loc.user_id === profile.id)
@@ -48,7 +48,6 @@ export function useMonthlyLocations(monthOffset: number = 0) {
         return {
           id: profile.id,
           full_name: profile.full_name,
-          email: profile.email,
           avatar_url: profile.avatar_url,
           locations: userLocations,
         };
