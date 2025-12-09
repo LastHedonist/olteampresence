@@ -2,14 +2,18 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Building2, Home, Coffee, Plane, Users, Calendar, TrendingUp } from 'lucide-react';
+import { Loader2, Building2, Home, Coffee, Plane } from 'lucide-react';
+import { WeeklyView } from '@/components/weekly';
+import { useLocations, LocationStatus } from '@/hooks/useLocations';
+import { format } from 'date-fns';
 
 export default function Dashboard() {
   const { user, profile, isLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const { allUsersLocations, weekDays } = useLocations(0);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -29,31 +33,47 @@ export default function Dashboard() {
     return null;
   }
 
+  // Calculate today's stats
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const todayStats = {
+    office: 0,
+    home_office: 0,
+    day_off: 0,
+    vacation: 0,
+  };
+
+  allUsersLocations.forEach((u) => {
+    const status = u.locations[today];
+    if (status) {
+      todayStats[status]++;
+    }
+  });
+
   const stats = [
     {
       title: 'No Escritório Hoje',
-      value: '0',
+      value: todayStats.office.toString(),
       icon: Building2,
       color: 'text-emerald-600 dark:text-emerald-400',
       bg: 'bg-emerald-100 dark:bg-emerald-900/30',
     },
     {
       title: 'Home Office',
-      value: '0',
+      value: todayStats.home_office.toString(),
       icon: Home,
       color: 'text-blue-600 dark:text-blue-400',
       bg: 'bg-blue-100 dark:bg-blue-900/30',
     },
     {
       title: 'Day Off',
-      value: '0',
+      value: todayStats.day_off.toString(),
       icon: Coffee,
       color: 'text-amber-600 dark:text-amber-400',
       bg: 'bg-amber-100 dark:bg-amber-900/30',
     },
     {
       title: 'Férias',
-      value: '0',
+      value: todayStats.vacation.toString(),
       icon: Plane,
       color: 'text-purple-600 dark:text-purple-400',
       bg: 'bg-purple-100 dark:bg-purple-900/30',
@@ -99,96 +119,8 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Main Content Area */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Team Overview */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-primary" />
-                <CardTitle>Visão da Equipe</CardTitle>
-              </div>
-              <CardDescription>
-                Veja a disponibilidade de todos os membros da equipe
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="rounded-full bg-muted p-4">
-                  <Calendar className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h3 className="mt-4 text-lg font-medium">Nenhum registro ainda</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Registre sua disponibilidade para começar
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                <CardTitle>Ações Rápidas</CardTitle>
-              </div>
-              <CardDescription>
-                Gerencie sua disponibilidade
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <Card className="cursor-pointer transition-colors hover:bg-accent">
-                  <CardContent className="flex items-center gap-3 p-4">
-                    <div className="rounded-lg bg-emerald-100 p-2 dark:bg-emerald-900/30">
-                      <Building2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Escritório</p>
-                      <p className="text-xs text-muted-foreground">Marcar presença</p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="cursor-pointer transition-colors hover:bg-accent">
-                  <CardContent className="flex items-center gap-3 p-4">
-                    <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-                      <Home className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Home Office</p>
-                      <p className="text-xs text-muted-foreground">Trabalho remoto</p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="cursor-pointer transition-colors hover:bg-accent">
-                  <CardContent className="flex items-center gap-3 p-4">
-                    <div className="rounded-lg bg-amber-100 p-2 dark:bg-amber-900/30">
-                      <Coffee className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Day Off</p>
-                      <p className="text-xs text-muted-foreground">Folga programada</p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="cursor-pointer transition-colors hover:bg-accent">
-                  <CardContent className="flex items-center gap-3 p-4">
-                    <div className="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
-                      <Plane className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Férias</p>
-                      <p className="text-xs text-muted-foreground">Período de descanso</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Weekly View */}
+        <WeeklyView searchQuery={searchQuery} />
       </div>
     </MainLayout>
   );
