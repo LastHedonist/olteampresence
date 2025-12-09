@@ -4,8 +4,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Building2, Home, Coffee, Plane } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, Building2, Home, Coffee, Plane, CalendarDays, Calendar } from 'lucide-react';
 import { WeeklyView } from '@/components/weekly';
+import { MonthlyView } from '@/components/monthly';
 import { useLocations, LocationStatus } from '@/hooks/useLocations';
 import { format } from 'date-fns';
 
@@ -119,8 +121,27 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Weekly View */}
-        <WeeklyView searchQuery={searchQuery} />
+        {/* Views Tabs */}
+        <Tabs defaultValue="weekly" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="weekly" className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4" />
+              Semanal
+            </TabsTrigger>
+            <TabsTrigger value="monthly" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Mensal
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="weekly">
+            <WeeklyView searchQuery={searchQuery} />
+          </TabsContent>
+
+          <TabsContent value="monthly">
+            <MonthlyView searchQuery={searchQuery} />
+          </TabsContent>
+        </Tabs>
       </div>
     </MainLayout>
   );
