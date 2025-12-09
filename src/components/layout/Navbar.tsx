@@ -120,6 +120,12 @@ export function Navbar({ onSearch }: NavbarProps) {
                   <User className="mr-2 h-4 w-4" />
                   <span>Perfil</span>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => navigate('/settings')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Configurações</span>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
@@ -178,6 +184,12 @@ export function Navbar({ onSearch }: NavbarProps) {
                 <User className="mr-2 h-4 w-4" />
                 Perfil
               </Button>
+              {isAdmin && (
+                <Button variant="ghost" className="justify-start" onClick={() => { navigate('/settings'); setIsMobileMenuOpen(false); }}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Configurações
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 className="justify-start text-destructive"
