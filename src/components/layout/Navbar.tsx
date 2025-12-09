@@ -21,7 +21,8 @@ import {
   Settings,
   Users,
   Calendar,
-  BarChart3
+  BarChart3,
+  PieChart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -99,6 +100,12 @@ export function Navbar({ onSearch }: NavbarProps) {
                   <Link to="/reports">
                     <BarChart3 className="mr-2 h-4 w-4" />
                     Relatórios
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/charts">
+                    <PieChart className="mr-2 h-4 w-4" />
+                    Gráficos
                   </Link>
                 </Button>
               </>
@@ -193,6 +200,12 @@ export function Navbar({ onSearch }: NavbarProps) {
                     <Link to="/reports">
                       <BarChart3 className="mr-2 h-4 w-4" />
                       Relatórios
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" className="justify-start" asChild>
+                    <Link to="/charts">
+                      <PieChart className="mr-2 h-4 w-4" />
+                      Gráficos
                     </Link>
                   </Button>
                 </>
