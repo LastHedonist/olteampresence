@@ -15,19 +15,20 @@ export function useMonthlyLocations(monthOffset: number = 0) {
   const monthEnd = endOfMonth(currentMonth);
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
+  // Memoize date strings to prevent infinite loops
+  const startDateStr = format(monthStart, 'yyyy-MM-dd');
+  const endDateStr = format(monthEnd, 'yyyy-MM-dd');
+
   const fetchLocations = useCallback(async () => {
     if (!user) return;
 
     setIsLoading(true);
     try {
-      const startDate = format(monthStart, 'yyyy-MM-dd');
-      const endDate = format(monthEnd, 'yyyy-MM-dd');
-
       const { data: locationsData, error: locationsError } = await supabase
         .from('locations')
         .select('*')
-        .gte('date', startDate)
-        .lte('date', endDate);
+        .gte('date', startDateStr)
+        .lte('date', endDateStr);
 
       if (locationsError) throw locationsError;
 
@@ -60,7 +61,7 @@ export function useMonthlyLocations(monthOffset: number = 0) {
     } finally {
       setIsLoading(false);
     }
-  }, [user, monthStart, monthEnd]);
+  }, [user, startDateStr, endDateStr]);
 
   useEffect(() => {
     fetchLocations();
