@@ -119,18 +119,18 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
                           <TooltipTrigger asChild>
                             <div
                               className={cn(
-                                'flex h-5 min-w-5 items-center justify-center gap-0.5 rounded px-1 text-xs font-semibold text-white shadow-sm transition-transform hover:scale-110',
+                                'flex h-8 min-w-8 items-center justify-center gap-1 rounded-md px-1.5 text-sm font-bold text-white shadow-md transition-transform hover:scale-110',
                                 STATUS_COLORS[status]
                               )}
                             >
-                              <Icon className="h-3 w-3" />
+                              <Icon className="h-4 w-4" />
                               <span>{count}</span>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-xs">
                             <div className="space-y-1">
                               <div className="flex items-center gap-1 font-medium">
-                                <Icon className="h-3 w-3" />
+                                <Icon className="h-4 w-4" />
                                 {config.label} ({count})
                               </div>
                               <div className="text-xs text-muted-foreground">
