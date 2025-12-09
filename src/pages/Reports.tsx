@@ -55,12 +55,6 @@ export default function Reports() {
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), 'yyyy-MM'));
 
-  // Redirect non-admin users
-  if (!authLoading && !isAdmin) {
-    navigate('/');
-    return null;
-  }
-
   const monthOptions = useMemo(() => {
     const options = [];
     for (let i = 0; i < 12; i++) {
@@ -187,6 +181,7 @@ export default function Reports() {
     link.click();
   };
 
+  // Early returns AFTER all hooks
   if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -197,6 +192,11 @@ export default function Reports() {
 
   if (!user) {
     navigate('/auth');
+    return null;
+  }
+
+  if (!isAdmin) {
+    navigate('/');
     return null;
   }
 
