@@ -33,20 +33,21 @@ export function useLocations(weekOffset: number = 0) {
   const weekEnd = endOfWeek(addWeeks(today, weekOffset), { weekStartsOn: 1 });
   const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
+  // Memoize date strings to prevent infinite loops
+  const startDateStr = format(weekStart, 'yyyy-MM-dd');
+  const endDateStr = format(weekEnd, 'yyyy-MM-dd');
+
   const fetchLocations = useCallback(async () => {
     if (!user) return;
 
     setIsLoading(true);
     try {
-      const startDate = format(weekStart, 'yyyy-MM-dd');
-      const endDate = format(weekEnd, 'yyyy-MM-dd');
-
       // Fetch all locations for the week
       const { data: locationsData, error: locationsError } = await supabase
         .from('locations')
         .select('*')
-        .gte('date', startDate)
-        .lte('date', endDate);
+        .gte('date', startDateStr)
+        .lte('date', endDateStr);
 
       if (locationsError) throw locationsError;
 
@@ -81,7 +82,7 @@ export function useLocations(weekOffset: number = 0) {
     } finally {
       setIsLoading(false);
     }
-  }, [user, weekStart, weekEnd]);
+  }, [user, startDateStr, endDateStr]);
 
   const updateLocation = async (date: Date, status: LocationStatus, notes?: string) => {
     if (!user) return;
