@@ -55,11 +55,6 @@ export default function Charts() {
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), 'yyyy-MM'));
 
-  if (!authLoading && !isAdmin) {
-    navigate('/');
-    return null;
-  }
-
   const monthOptions = useMemo(() => {
     const options = [];
     for (let i = 0; i < 12; i++) {
@@ -147,6 +142,7 @@ export default function Charts() {
     }).filter(stat => stat.office + stat.home_office + stat.day_off + stat.vacation > 0);
   }, [teamProfiles, locations]);
 
+  // Early returns AFTER all hooks
   if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -157,6 +153,11 @@ export default function Charts() {
 
   if (!user) {
     navigate('/auth');
+    return null;
+  }
+
+  if (!isAdmin) {
+    navigate('/');
     return null;
   }
 
