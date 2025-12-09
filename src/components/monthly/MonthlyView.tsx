@@ -18,10 +18,8 @@ export function MonthlyView({ searchQuery = '' }: MonthlyViewProps) {
     useMonthlyLocations(monthOffset);
 
   const filteredUsers = searchQuery
-    ? allUsersLocations.filter(
-        (user) =>
-          user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    ? allUsersLocations.filter((user) =>
+        user.full_name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : allUsersLocations;
 

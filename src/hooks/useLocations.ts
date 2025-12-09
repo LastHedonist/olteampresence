@@ -18,7 +18,6 @@ export interface Location {
 export interface UserWithLocations {
   id: string;
   full_name: string;
-  email: string;
   avatar_url: string | null;
   locations: Record<string, LocationStatus>;
 }
@@ -51,10 +50,9 @@ export function useLocations(weekOffset: number = 0) {
 
       if (locationsError) throw locationsError;
 
-      // Fetch all profiles
+      // Fetch all active profiles using secure function (excludes email)
       const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
+        .rpc('get_team_profiles');
 
       if (profilesError) throw profilesError;
 
@@ -70,7 +68,6 @@ export function useLocations(weekOffset: number = 0) {
         return {
           id: profile.id,
           full_name: profile.full_name,
-          email: profile.email,
           avatar_url: profile.avatar_url,
           locations: userLocations,
         };
