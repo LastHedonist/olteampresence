@@ -9,12 +9,14 @@ import { Loader2, Building2, Home, Coffee, Plane, CalendarDays, Calendar } from 
 import { WeeklyView } from '@/components/weekly';
 import { MonthlyView } from '@/components/monthly';
 import { useLocations, LocationStatus } from '@/hooks/useLocations';
+import { StatusEmployeesDialog } from '@/components/dashboard/StatusEmployeesDialog';
 import { format } from 'date-fns';
 
 export default function Dashboard() {
   const { user, profile, isLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<LocationStatus | null>(null);
   const { allUsersLocations, weekDays } = useLocations(0);
 
   useEffect(() => {
@@ -58,6 +60,7 @@ export default function Dashboard() {
       icon: Building2,
       color: 'text-emerald-600 dark:text-emerald-400',
       bg: 'bg-emerald-100 dark:bg-emerald-900/30',
+      status: 'office' as LocationStatus,
     },
     {
       title: 'Home Office',
@@ -65,6 +68,7 @@ export default function Dashboard() {
       icon: Home,
       color: 'text-blue-600 dark:text-blue-400',
       bg: 'bg-blue-100 dark:bg-blue-900/30',
+      status: 'home_office' as LocationStatus,
     },
     {
       title: 'Day Off',
@@ -72,6 +76,7 @@ export default function Dashboard() {
       icon: Coffee,
       color: 'text-amber-600 dark:text-amber-400',
       bg: 'bg-amber-100 dark:bg-amber-900/30',
+      status: 'day_off' as LocationStatus,
     },
     {
       title: 'Férias',
@@ -79,8 +84,19 @@ export default function Dashboard() {
       icon: Plane,
       color: 'text-purple-600 dark:text-purple-400',
       bg: 'bg-purple-100 dark:bg-purple-900/30',
+      status: 'vacation' as LocationStatus,
     },
   ];
+
+  const getEmployeesForStatus = (status: LocationStatus) => {
+    return allUsersLocations
+      .filter((u) => u.locations[today] === status)
+      .map((u) => ({
+        id: u.id,
+        full_name: u.full_name,
+        avatar_url: u.avatar_url,
+      }));
+  };
 
   return (
     <MainLayout onSearch={setSearchQuery}>
@@ -105,7 +121,11 @@ export default function Dashboard() {
         {/* Stats Grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => (
-            <Card key={stat.title} className="transition-shadow hover:shadow-md">
+            <Card
+              key={stat.title}
+              className="cursor-pointer transition-shadow hover:shadow-md"
+              onClick={() => setSelectedStatus(stat.status)}
+            >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {stat.title}
@@ -120,6 +140,14 @@ export default function Dashboard() {
             </Card>
           ))}
         </div>
+
+        {/* Status Employees Dialog */}
+        <StatusEmployeesDialog
+          open={selectedStatus !== null}
+          onOpenChange={(open) => !open && setSelectedStatus(null)}
+          status={selectedStatus}
+          employees={selectedStatus ? getEmployeesForStatus(selectedStatus) : []}
+        />
 
         {/* Views Tabs */}
         <Tabs defaultValue="weekly" className="w-full">
