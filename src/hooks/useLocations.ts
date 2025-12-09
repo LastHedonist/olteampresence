@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { format, startOfWeek, endOfWeek, addWeeks, eachDayOfInterval } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { validateNotes } from '@/lib/validation';
 
 export type LocationStatus = 'office' | 'home_office' | 'day_off' | 'vacation';
 
@@ -91,6 +91,14 @@ export function useLocations(weekOffset: number = 0) {
 
     const dateStr = format(date, 'yyyy-MM-dd');
 
+    // Validate and sanitize notes input
+    const notesValidation = validateNotes(notes);
+    if (!notesValidation.isValid) {
+      toast.error(notesValidation.error || 'Notas inválidas');
+      return;
+    }
+    const sanitizedNotes = notesValidation.sanitized;
+
     try {
       // Check if location exists
       const { data: existing } = await supabase
@@ -104,7 +112,7 @@ export function useLocations(weekOffset: number = 0) {
         // Update existing
         const { error } = await supabase
           .from('locations')
-          .update({ status, notes, updated_at: new Date().toISOString() })
+          .update({ status, notes: sanitizedNotes, updated_at: new Date().toISOString() })
           .eq('id', existing.id);
 
         if (error) throw error;
@@ -116,7 +124,7 @@ export function useLocations(weekOffset: number = 0) {
             user_id: user.id,
             date: dateStr,
             status,
-            notes,
+            notes: sanitizedNotes,
           });
 
         if (error) throw error;
