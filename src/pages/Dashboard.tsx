@@ -50,9 +50,9 @@ export default function Dashboard() {
   const isTodayWeekend = isWeekend(new Date());
   
   allUsersLocations.forEach((u) => {
-    const savedStatus = u.locations[today];
+    const locationData = u.locations[today];
     // Default weekends to day_off if no status is set
-    const status = savedStatus ?? (isTodayWeekend ? 'day_off' : undefined);
+    const status = locationData?.status ?? (isTodayWeekend ? 'day_off' : undefined);
     if (status) {
       todayStats[status]++;
     }
@@ -96,9 +96,9 @@ export default function Dashboard() {
   const getEmployeesForStatus = (status: LocationStatus) => {
     return allUsersLocations
       .filter((u) => {
-        const savedStatus = u.locations[today];
+        const locationData = u.locations[today];
         // Default weekends to day_off if no status is set
-        const effectiveStatus = savedStatus ?? (isTodayWeekend ? 'day_off' : undefined);
+        const effectiveStatus = locationData?.status ?? (isTodayWeekend ? 'day_off' : undefined);
         return effectiveStatus === status;
       })
       .map((u) => ({

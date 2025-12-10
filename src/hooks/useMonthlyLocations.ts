@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { format, startOfMonth, endOfMonth, addMonths, eachDayOfInterval } from 'date-fns';
 import { toast } from 'sonner';
-import { LocationStatus, UserWithLocations } from './useLocations';
+import { LocationStatus, LocationData, UserWithLocations } from './useLocations';
 
 export function useMonthlyLocations(monthOffset: number = 0) {
   const { user } = useAuth();
@@ -39,11 +39,15 @@ export function useMonthlyLocations(monthOffset: number = 0) {
       if (profilesError) throw profilesError;
 
       const usersWithLocations: UserWithLocations[] = (profilesData || []).map((profile) => {
-        const userLocations: Record<string, LocationStatus> = {};
+        const userLocations: Record<string, LocationData> = {};
         locationsData
           ?.filter((loc) => loc.user_id === profile.id)
           .forEach((loc) => {
-            userLocations[loc.date] = loc.status as LocationStatus;
+            userLocations[loc.date] = {
+              status: loc.status as LocationStatus,
+              arrival_time: loc.arrival_time,
+              departure_time: loc.departure_time,
+            };
           });
 
         return {

@@ -16,8 +16,10 @@ export type Database = {
     Tables: {
       locations: {
         Row: {
+          arrival_time: string | null
           created_at: string
           date: string
+          departure_time: string | null
           id: string
           notes: string | null
           status: Database["public"]["Enums"]["location_status"]
@@ -25,8 +27,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          arrival_time?: string | null
           created_at?: string
           date: string
+          departure_time?: string | null
           id?: string
           notes?: string | null
           status?: Database["public"]["Enums"]["location_status"]
@@ -34,8 +38,10 @@ export type Database = {
           user_id: string
         }
         Update: {
+          arrival_time?: string | null
           created_at?: string
           date?: string
+          departure_time?: string | null
           id?: string
           notes?: string | null
           status?: Database["public"]["Enums"]["location_status"]

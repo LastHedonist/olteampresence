@@ -41,9 +41,9 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
     };
 
     allUsersLocations.forEach((user) => {
-      const savedStatus = user.locations[dateStr];
+      const locationData = user.locations[dateStr];
       // Default weekends to day_off if no status is set
-      const status = savedStatus ?? (isWeekend(date) ? 'day_off' : undefined);
+      const status = locationData?.status ?? (isWeekend(date) ? 'day_off' : undefined);
       if (status) {
         stats[status]++;
       }
@@ -56,9 +56,9 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
     const dateStr = format(date, 'yyyy-MM-dd');
     return allUsersLocations
       .filter((user) => {
-        const savedStatus = user.locations[dateStr];
+        const locationData = user.locations[dateStr];
         // Default weekends to day_off if no status is set
-        const effectiveStatus = savedStatus ?? (isWeekend(date) ? 'day_off' : undefined);
+        const effectiveStatus = locationData?.status ?? (isWeekend(date) ? 'day_off' : undefined);
         return effectiveStatus === status;
       })
       .map((user) => user.full_name);

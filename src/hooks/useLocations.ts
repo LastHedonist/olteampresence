@@ -13,13 +13,21 @@ export interface Location {
   date: string;
   status: LocationStatus;
   notes: string | null;
+  arrival_time: string | null;
+  departure_time: string | null;
+}
+
+export interface LocationData {
+  status: LocationStatus;
+  arrival_time?: string | null;
+  departure_time?: string | null;
 }
 
 export interface UserWithLocations {
   id: string;
   full_name: string;
   avatar_url: string | null;
-  locations: Record<string, LocationStatus>;
+  locations: Record<string, LocationData>;
 }
 
 export function useLocations(weekOffset: number = 0) {
@@ -59,11 +67,15 @@ export function useLocations(weekOffset: number = 0) {
 
       // Combine profiles with their locations
       const usersWithLocations: UserWithLocations[] = profilesData.map((profile) => {
-        const userLocations: Record<string, LocationStatus> = {};
+        const userLocations: Record<string, LocationData> = {};
         locationsData
           ?.filter((loc) => loc.user_id === profile.id)
           .forEach((loc) => {
-            userLocations[loc.date] = loc.status as LocationStatus;
+            userLocations[loc.date] = {
+              status: loc.status as LocationStatus,
+              arrival_time: loc.arrival_time,
+              departure_time: loc.departure_time,
+            };
           });
 
         return {
@@ -84,7 +96,7 @@ export function useLocations(weekOffset: number = 0) {
     }
   }, [user, startDateStr, endDateStr]);
 
-  const updateLocation = async (date: Date, status: LocationStatus, notes?: string) => {
+  const updateLocation = async (date: Date, status: LocationStatus, notes?: string, arrivalTime?: string, departureTime?: string) => {
     if (!user) return;
 
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -110,7 +122,13 @@ export function useLocations(weekOffset: number = 0) {
         // Update existing
         const { error } = await supabase
           .from('locations')
-          .update({ status, notes: sanitizedNotes, updated_at: new Date().toISOString() })
+          .update({ 
+            status, 
+            notes: sanitizedNotes, 
+            arrival_time: status === 'office' ? arrivalTime : null,
+            departure_time: status === 'office' ? departureTime : null,
+            updated_at: new Date().toISOString() 
+          })
           .eq('id', existing.id);
 
         if (error) throw error;
@@ -123,6 +141,8 @@ export function useLocations(weekOffset: number = 0) {
             date: dateStr,
             status,
             notes: sanitizedNotes,
+            arrival_time: status === 'office' ? arrivalTime : null,
+            departure_time: status === 'office' ? departureTime : null,
           });
 
         if (error) throw error;
