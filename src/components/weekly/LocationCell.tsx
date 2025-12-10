@@ -32,13 +32,13 @@ export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSe
   const hasOfficeTime = status === 'office' && arrivalTime && departureTime;
   const timeDisplay = hasOfficeTime ? `${arrivalTime} - ${departureTime}` : null;
   
-  // Check if office time is custom (different from default 09:00-18:00)
-  const isCustomOfficeTime = status === 'office' && hasOfficeTime && (arrivalTime !== '09:00' || departureTime !== '18:00');
+  // Check if office time is default (09:00-18:00)
+  const isDefaultOfficeTime = status === 'office' && hasOfficeTime && arrivalTime === '09:00' && departureTime === '18:00';
   
-  // Use lighter green for custom office times
+  // Use darker green for default office times
   const getStatusColor = () => {
-    if (status === 'office' && isCustomOfficeTime) {
-      return 'bg-lime-100 text-lime-600 dark:bg-lime-900/30 dark:text-lime-400';
+    if (isDefaultOfficeTime) {
+      return 'bg-emerald-200 text-emerald-800 dark:bg-emerald-800/50 dark:text-emerald-300';
     }
     return config?.color;
   };
