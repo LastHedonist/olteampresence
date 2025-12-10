@@ -51,7 +51,7 @@ export function StatusEmployeesDialog({ open, onOpenChange, status, employees }:
         <ScrollArea className="max-h-[60vh]">
           {employees.length === 0 ? (
             <p className="py-8 text-center text-muted-foreground">
-              Nenhum funcionário com este status hoje.
+              Nenhum recurso com este status hoje.
             </p>
           ) : (
             <div className="space-y-2">

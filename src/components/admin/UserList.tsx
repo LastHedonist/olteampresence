@@ -84,7 +84,7 @@ export function UserList({ users, onToggleActive, onUpdateUser, onUpdateRole }: 
                     ) : (
                       <span className="flex items-center gap-1">
                         <User className="h-3 w-3" />
-                        Funcionário
+                        Recurso
                       </span>
                     )}
                   </Badge>
