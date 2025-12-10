@@ -6,15 +6,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
+type ResourceGroup = 'head' | 'lead' | 'equipe';
+
 const profileSchema = z.object({
   fullName: z.string().trim().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
   jobFunction: z.string().trim().min(1, 'Função é obrigatória').max(100, 'Função muito longa'),
+  resourceGroup: z.enum(['head', 'lead', 'equipe']),
 });
 
 export default function Profile() {
@@ -22,13 +32,15 @@ export default function Profile() {
   const navigate = useNavigate();
   const [fullName, setFullName] = useState('');
   const [jobFunction, setJobFunction] = useState('');
+  const [resourceGroup, setResourceGroup] = useState<ResourceGroup>('equipe');
   const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState<{ fullName?: string; jobFunction?: string }>({});
+  const [errors, setErrors] = useState<{ fullName?: string; jobFunction?: string; resourceGroup?: string }>({});
 
   useEffect(() => {
     if (profile) {
       setFullName(profile.full_name || '');
       setJobFunction(profile.job_function || '');
+      setResourceGroup((profile.resource_group as ResourceGroup) || 'equipe');
     }
   }, [profile]);
 
@@ -61,12 +73,13 @@ export default function Profile() {
 
     setErrors({});
     
-    const result = profileSchema.safeParse({ fullName, jobFunction });
+    const result = profileSchema.safeParse({ fullName, jobFunction, resourceGroup });
     if (!result.success) {
-      const fieldErrors: { fullName?: string; jobFunction?: string } = {};
+      const fieldErrors: { fullName?: string; jobFunction?: string; resourceGroup?: string } = {};
       result.error.errors.forEach((err) => {
         if (err.path[0] === 'fullName') fieldErrors.fullName = err.message;
         if (err.path[0] === 'jobFunction') fieldErrors.jobFunction = err.message;
+        if (err.path[0] === 'resourceGroup') fieldErrors.resourceGroup = err.message;
       });
       setErrors(fieldErrors);
       return;
@@ -78,7 +91,8 @@ export default function Profile() {
         .from('profiles')
         .update({ 
           full_name: fullName.trim(),
-          job_function: jobFunction.trim()
+          job_function: jobFunction.trim(),
+          resource_group: resourceGroup
         })
         .eq('id', user.id);
 
@@ -154,6 +168,26 @@ export default function Profile() {
                 />
                 {errors.jobFunction && (
                   <p className="text-xs text-destructive">{errors.jobFunction}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="resourceGroup">Grupo *</Label>
+                <Select
+                  value={resourceGroup}
+                  onValueChange={(value) => setResourceGroup(value as ResourceGroup)}
+                >
+                  <SelectTrigger className={errors.resourceGroup ? 'border-destructive' : ''}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="head">Head</SelectItem>
+                    <SelectItem value="lead">Lead</SelectItem>
+                    <SelectItem value="equipe">Equipe</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.resourceGroup && (
+                  <p className="text-xs text-destructive">{errors.resourceGroup}</p>
                 )}
               </div>
 

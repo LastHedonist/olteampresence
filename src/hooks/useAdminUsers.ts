@@ -3,12 +3,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export type AppRole = 'admin' | 'employee';
+export type ResourceGroup = 'head' | 'lead' | 'equipe';
 
 export interface AdminUser {
   id: string;
   email: string;
   full_name: string;
   job_function: string;
+  resource_group: ResourceGroup;
   avatar_url: string | null;
   is_active: boolean;
   role: AppRole;
@@ -45,6 +47,7 @@ export function useAdminUsers() {
           email: profile.email,
           full_name: profile.full_name,
           job_function: profile.job_function,
+          resource_group: (profile.resource_group as ResourceGroup) || 'equipe',
           avatar_url: profile.avatar_url,
           is_active: profile.is_active,
           role: (userRole?.role as AppRole) || 'employee',
@@ -61,7 +64,7 @@ export function useAdminUsers() {
     }
   }, []);
 
-  const updateUser = async (userId: string, updates: { full_name?: string; is_active?: boolean; job_function?: string }) => {
+  const updateUser = async (userId: string, updates: { full_name?: string; is_active?: boolean; job_function?: string; resource_group?: ResourceGroup }) => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -99,10 +102,10 @@ export function useAdminUsers() {
     }
   };
 
-  const createUser = async (email: string, password: string, fullName: string, jobFunction: string, role: AppRole) => {
+  const createUser = async (email: string, password: string, fullName: string, jobFunction: string, resourceGroup: ResourceGroup, role: AppRole) => {
     try {
       const { data, error } = await supabase.functions.invoke('admin-create-user', {
-        body: { email, password, fullName, jobFunction, role },
+        body: { email, password, fullName, jobFunction, resourceGroup, role },
       });
 
       if (error) throw error;

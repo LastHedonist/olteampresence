@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
 type AppRole = 'admin' | 'employee';
+type ResourceGroup = 'head' | 'lead' | 'equipe';
 
 interface Profile {
   id: string;
@@ -10,6 +11,7 @@ interface Profile {
   email: string;
   avatar_url: string | null;
   job_function: string;
+  resource_group: ResourceGroup;
 }
 
 interface AuthContextType {

@@ -20,18 +20,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { AppRole } from '@/hooks/useAdminUsers';
+import { AppRole, ResourceGroup } from '@/hooks/useAdminUsers';
 
 const createUserSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
   fullName: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100),
   jobFunction: z.string().min(2, 'Função deve ter no mínimo 2 caracteres').max(100),
+  resourceGroup: z.enum(['head', 'lead', 'equipe']),
   role: z.enum(['admin', 'employee']),
 });
 
 interface CreateUserDialogProps {
-  onCreateUser: (email: string, password: string, fullName: string, jobFunction: string, role: AppRole) => Promise<{ success: boolean }>;
+  onCreateUser: (email: string, password: string, fullName: string, jobFunction: string, resourceGroup: ResourceGroup, role: AppRole) => Promise<{ success: boolean }>;
 }
 
 export function CreateUserDialog({ onCreateUser }: CreateUserDialogProps) {
@@ -43,6 +44,7 @@ export function CreateUserDialog({ onCreateUser }: CreateUserDialogProps) {
     password: '',
     fullName: '',
     jobFunction: '',
+    resourceGroup: 'equipe' as ResourceGroup,
     role: 'employee' as AppRole,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -69,13 +71,14 @@ export function CreateUserDialog({ onCreateUser }: CreateUserDialogProps) {
       formData.password,
       formData.fullName,
       formData.jobFunction,
+      formData.resourceGroup,
       formData.role
     );
     setIsLoading(false);
 
     if (result.success) {
       setOpen(false);
-      setFormData({ email: '', password: '', fullName: '', jobFunction: '', role: 'employee' });
+      setFormData({ email: '', password: '', fullName: '', jobFunction: '', resourceGroup: 'equipe', role: 'employee' });
     }
   };
 
@@ -159,6 +162,26 @@ export function CreateUserDialog({ onCreateUser }: CreateUserDialogProps) {
               />
               {errors.jobFunction && (
                 <p className="text-sm text-destructive">{errors.jobFunction}</p>
+              )}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="resourceGroup">Grupo</Label>
+              <Select
+                value={formData.resourceGroup}
+                onValueChange={(value) => setFormData({ ...formData, resourceGroup: value as ResourceGroup })}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="head">Head</SelectItem>
+                  <SelectItem value="lead">Lead</SelectItem>
+                  <SelectItem value="equipe">Equipe</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.resourceGroup && (
+                <p className="text-sm text-destructive">{errors.resourceGroup}</p>
               )}
             </div>
             <div className="grid gap-2">
