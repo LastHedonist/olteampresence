@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { isWeekend } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -46,8 +47,12 @@ export default function Dashboard() {
     vacation: 0,
   };
 
+  const isTodayWeekend = isWeekend(new Date());
+  
   allUsersLocations.forEach((u) => {
-    const status = u.locations[today];
+    const savedStatus = u.locations[today];
+    // Default weekends to day_off if no status is set
+    const status = savedStatus ?? (isTodayWeekend ? 'day_off' : undefined);
     if (status) {
       todayStats[status]++;
     }
@@ -90,7 +95,12 @@ export default function Dashboard() {
 
   const getEmployeesForStatus = (status: LocationStatus) => {
     return allUsersLocations
-      .filter((u) => u.locations[today] === status)
+      .filter((u) => {
+        const savedStatus = u.locations[today];
+        // Default weekends to day_off if no status is set
+        const effectiveStatus = savedStatus ?? (isTodayWeekend ? 'day_off' : undefined);
+        return effectiveStatus === status;
+      })
       .map((u) => ({
         id: u.id,
         full_name: u.full_name,

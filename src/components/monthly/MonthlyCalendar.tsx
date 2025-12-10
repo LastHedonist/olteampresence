@@ -1,4 +1,4 @@
-import { format, isSameDay, isToday, getDay, startOfMonth } from 'date-fns';
+import { format, isSameDay, isToday, getDay, startOfMonth, isWeekend } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { UserWithLocations, LocationStatus, getStatusConfig } from '@/hooks/useLocations';
@@ -41,7 +41,9 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
     };
 
     allUsersLocations.forEach((user) => {
-      const status = user.locations[dateStr];
+      const savedStatus = user.locations[dateStr];
+      // Default weekends to day_off if no status is set
+      const status = savedStatus ?? (isWeekend(date) ? 'day_off' : undefined);
       if (status) {
         stats[status]++;
       }
@@ -53,7 +55,12 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
   const getUsersForDay = (date: Date, status: LocationStatus) => {
     const dateStr = format(date, 'yyyy-MM-dd');
     return allUsersLocations
-      .filter((user) => user.locations[dateStr] === status)
+      .filter((user) => {
+        const savedStatus = user.locations[dateStr];
+        // Default weekends to day_off if no status is set
+        const effectiveStatus = savedStatus ?? (isWeekend(date) ? 'day_off' : undefined);
+        return effectiveStatus === status;
+      })
       .map((user) => user.full_name);
   };
 
