@@ -150,7 +150,7 @@ export default function Auth() {
           <Calendar className="h-7 w-7 text-primary-foreground" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">TeamPresence</h1>
+          <h1 className="text-2xl font-bold text-foreground">Overlabs Work Mode</h1>
           <p className="text-sm text-muted-foreground">Gestão de Disponibilidade</p>
         </div>
       </div>
