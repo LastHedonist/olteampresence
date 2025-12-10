@@ -31,6 +31,17 @@ export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSe
 
   const hasOfficeTime = status === 'office' && arrivalTime && departureTime;
   const timeDisplay = hasOfficeTime ? `${arrivalTime} - ${departureTime}` : null;
+  
+  // Check if office time is custom (different from default 09:00-18:00)
+  const isCustomOfficeTime = status === 'office' && hasOfficeTime && (arrivalTime !== '09:00' || departureTime !== '18:00');
+  
+  // Use lighter green for custom office times
+  const getStatusColor = () => {
+    if (status === 'office' && isCustomOfficeTime) {
+      return 'bg-lime-100 text-lime-600 dark:bg-lime-900/30 dark:text-lime-400';
+    }
+    return config?.color;
+  };
 
   if (!canEdit) {
     if (!status) {
@@ -45,7 +56,7 @@ export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSe
       <div
         className={cn(
           'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium',
-          config?.color
+          getStatusColor()
         )}
       >
         {Icon && <Icon className="h-3 w-3" />}
@@ -82,7 +93,7 @@ export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSe
               size="sm"
               className={cn(
                 'h-auto w-full min-h-[36px] px-2 py-1',
-                status && config?.color,
+                status && getStatusColor(),
                 !status && 'border border-dashed border-muted-foreground/30 hover:border-primary/50'
               )}
             >
