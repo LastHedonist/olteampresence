@@ -10,6 +10,7 @@ interface CreateUserRequest {
   password: string;
   fullName: string;
   jobFunction: string;
+  resourceGroup: 'head' | 'lead' | 'equipe';
   role: 'admin' | 'employee';
 }
 
@@ -81,13 +82,13 @@ Deno.serve(async (req) => {
     console.log('Admin verified, proceeding with user creation');
 
     // Parse request body
-    const { email, password, fullName, jobFunction, role }: CreateUserRequest = await req.json();
+    const { email, password, fullName, jobFunction, resourceGroup, role }: CreateUserRequest = await req.json();
 
     // Validate input
-    if (!email || !password || !fullName || !jobFunction || !role) {
+    if (!email || !password || !fullName || !jobFunction || !resourceGroup || !role) {
       console.error('Missing required fields');
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: email, password, fullName, jobFunction, role' }),
+        JSON.stringify({ error: 'Missing required fields: email, password, fullName, jobFunction, resourceGroup, role' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -96,6 +97,14 @@ Deno.serve(async (req) => {
       console.error('Invalid job function length');
       return new Response(
         JSON.stringify({ error: 'Job function must be between 2 and 100 characters' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!['head', 'lead', 'equipe'].includes(resourceGroup)) {
+      console.error('Invalid resource group:', resourceGroup);
+      return new Response(
+        JSON.stringify({ error: 'Resource group must be head, lead, or equipe' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -135,16 +144,16 @@ Deno.serve(async (req) => {
 
     console.log('User created:', newUser.user.id);
 
-    // Update profile with job_function
+    // Update profile with job_function and resource_group
     const { error: profileError } = await adminClient
       .from('profiles')
-      .update({ job_function: jobFunction })
+      .update({ job_function: jobFunction, resource_group: resourceGroup })
       .eq('id', newUser.user.id);
 
     if (profileError) {
-      console.error('Error updating profile job_function:', profileError);
+      console.error('Error updating profile:', profileError);
     } else {
-      console.log('Profile job_function updated');
+      console.log('Profile updated with job_function and resource_group');
     }
 
     // If role is admin, update the role (employee is default)

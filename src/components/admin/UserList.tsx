@@ -20,14 +20,20 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { AdminUser, AppRole } from '@/hooks/useAdminUsers';
+import { AdminUser, AppRole, ResourceGroup } from '@/hooks/useAdminUsers';
 import { EditUserDialog } from './EditUserDialog';
 import { useAuth } from '@/contexts/AuthContext';
+
+const GROUP_LABELS: Record<ResourceGroup, string> = {
+  head: 'Head',
+  lead: 'Lead',
+  equipe: 'Equipe',
+};
 
 interface UserListProps {
   users: AdminUser[];
   onToggleActive: (userId: string, isActive: boolean) => Promise<{ success: boolean }>;
-  onUpdateUser: (userId: string, updates: { full_name?: string; job_function?: string }) => Promise<{ success: boolean }>;
+  onUpdateUser: (userId: string, updates: { full_name?: string; job_function?: string; resource_group?: ResourceGroup }) => Promise<{ success: boolean }>;
   onUpdateRole: (userId: string, role: AppRole) => Promise<{ success: boolean }>;
 }
 
@@ -53,6 +59,7 @@ export function UserList({ users, onToggleActive, onUpdateUser, onUpdateRole }: 
               <TableHead>Usuário</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Função</TableHead>
+              <TableHead>Grupo</TableHead>
               <TableHead>Papel</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Criado em</TableHead>
@@ -74,6 +81,9 @@ export function UserList({ users, onToggleActive, onUpdateUser, onUpdateRole }: 
                 </TableCell>
                 <TableCell className="text-muted-foreground">{user.email}</TableCell>
                 <TableCell className="text-muted-foreground">{user.job_function}</TableCell>
+                <TableCell>
+                  <Badge variant="outline">{GROUP_LABELS[user.resource_group] || 'Equipe'}</Badge>
+                </TableCell>
                 <TableCell>
                   <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                     {user.role === 'admin' ? (

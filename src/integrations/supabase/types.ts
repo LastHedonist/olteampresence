@@ -53,6 +53,7 @@ export type Database = {
           id: string
           is_active: boolean
           job_function: string
+          resource_group: Database["public"]["Enums"]["resource_group"]
           updated_at: string
         }
         Insert: {
@@ -63,6 +64,7 @@ export type Database = {
           id: string
           is_active?: boolean
           job_function?: string
+          resource_group?: Database["public"]["Enums"]["resource_group"]
           updated_at?: string
         }
         Update: {
@@ -73,6 +75,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           job_function?: string
+          resource_group?: Database["public"]["Enums"]["resource_group"]
           updated_at?: string
         }
         Relationships: []
@@ -123,6 +126,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "employee"
       location_status: "office" | "home_office" | "day_off" | "vacation"
+      resource_group: "head" | "lead" | "equipe"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -252,6 +256,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "employee"],
       location_status: ["office", "home_office", "day_off", "vacation"],
+      resource_group: ["head", "lead", "equipe"],
     },
   },
 } as const
