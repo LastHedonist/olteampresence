@@ -26,11 +26,12 @@ const createUserSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
   fullName: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100),
+  jobFunction: z.string().min(2, 'Função deve ter no mínimo 2 caracteres').max(100),
   role: z.enum(['admin', 'employee']),
 });
 
 interface CreateUserDialogProps {
-  onCreateUser: (email: string, password: string, fullName: string, role: AppRole) => Promise<{ success: boolean }>;
+  onCreateUser: (email: string, password: string, fullName: string, jobFunction: string, role: AppRole) => Promise<{ success: boolean }>;
 }
 
 export function CreateUserDialog({ onCreateUser }: CreateUserDialogProps) {
@@ -41,6 +42,7 @@ export function CreateUserDialog({ onCreateUser }: CreateUserDialogProps) {
     email: '',
     password: '',
     fullName: '',
+    jobFunction: '',
     role: 'employee' as AppRole,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -66,13 +68,14 @@ export function CreateUserDialog({ onCreateUser }: CreateUserDialogProps) {
       formData.email,
       formData.password,
       formData.fullName,
+      formData.jobFunction,
       formData.role
     );
     setIsLoading(false);
 
     if (result.success) {
       setOpen(false);
-      setFormData({ email: '', password: '', fullName: '', role: 'employee' });
+      setFormData({ email: '', password: '', fullName: '', jobFunction: '', role: 'employee' });
     }
   };
 
@@ -143,6 +146,19 @@ export function CreateUserDialog({ onCreateUser }: CreateUserDialogProps) {
               </div>
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password}</p>
+              )}
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="jobFunction">Função</Label>
+              <Input
+                id="jobFunction"
+                value={formData.jobFunction}
+                onChange={(e) => setFormData({ ...formData, jobFunction: e.target.value })}
+                placeholder="Desenvolvedor, Designer, Gerente..."
+                disabled={isLoading}
+              />
+              {errors.jobFunction && (
+                <p className="text-sm text-destructive">{errors.jobFunction}</p>
               )}
             </div>
             <div className="grid gap-2">
