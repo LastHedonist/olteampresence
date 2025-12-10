@@ -17,9 +17,17 @@ export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
   const { allUsersLocations, isLoading, weekDays, weekStart, weekEnd, updateLocation } = useLocations(weekOffset);
   const { user } = useAuth();
 
+  // Filter by search query
   const filteredUsers = allUsersLocations.filter((u) =>
     u.full_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Sort users: current user first, then alphabetically by name
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    if (a.id === user?.id) return -1;
+    if (b.id === user?.id) return 1;
+    return a.full_name.localeCompare(b.full_name, 'pt-BR');
+  });
 
   const canEditWeek = !isBefore(startOfDay(weekEnd), startOfDay(new Date()));
 
@@ -76,7 +84,7 @@ export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
           </div>
         ) : (
           <WeeklyTable
-            users={filteredUsers}
+            users={sortedUsers}
             weekDays={weekDays}
             currentUserId={user?.id}
             onUpdateLocation={updateLocation}
