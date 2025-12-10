@@ -97,10 +97,10 @@ export function useAdminUsers() {
     }
   };
 
-  const createUser = async (email: string, password: string, fullName: string, role: AppRole) => {
+  const createUser = async (email: string, password: string, fullName: string, jobFunction: string, role: AppRole) => {
     try {
       const { data, error } = await supabase.functions.invoke('admin-create-user', {
-        body: { email, password, fullName, role },
+        body: { email, password, fullName, jobFunction, role },
       });
 
       if (error) throw error;

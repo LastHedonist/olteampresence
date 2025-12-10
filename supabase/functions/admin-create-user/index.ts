@@ -9,6 +9,7 @@ interface CreateUserRequest {
   email: string;
   password: string;
   fullName: string;
+  jobFunction: string;
   role: 'admin' | 'employee';
 }
 
@@ -80,13 +81,21 @@ Deno.serve(async (req) => {
     console.log('Admin verified, proceeding with user creation');
 
     // Parse request body
-    const { email, password, fullName, role }: CreateUserRequest = await req.json();
+    const { email, password, fullName, jobFunction, role }: CreateUserRequest = await req.json();
 
     // Validate input
-    if (!email || !password || !fullName || !role) {
+    if (!email || !password || !fullName || !jobFunction || !role) {
       console.error('Missing required fields');
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: email, password, fullName, role' }),
+        JSON.stringify({ error: 'Missing required fields: email, password, fullName, jobFunction, role' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (jobFunction.length < 2 || jobFunction.length > 100) {
+      console.error('Invalid job function length');
+      return new Response(
+        JSON.stringify({ error: 'Job function must be between 2 and 100 characters' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -113,7 +122,7 @@ Deno.serve(async (req) => {
       email,
       password,
       email_confirm: true,
-      user_metadata: { full_name: fullName },
+      user_metadata: { full_name: fullName, job_function: jobFunction },
     });
 
     if (createError) {
@@ -125,6 +134,18 @@ Deno.serve(async (req) => {
     }
 
     console.log('User created:', newUser.user.id);
+
+    // Update profile with job_function
+    const { error: profileError } = await adminClient
+      .from('profiles')
+      .update({ job_function: jobFunction })
+      .eq('id', newUser.user.id);
+
+    if (profileError) {
+      console.error('Error updating profile job_function:', profileError);
+    } else {
+      console.log('Profile job_function updated');
+    }
 
     // If role is admin, update the role (employee is default)
     if (role === 'admin') {
