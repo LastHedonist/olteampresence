@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -27,6 +27,14 @@ export function OfficeTimeDialog({
 }: OfficeTimeDialogProps) {
   const [arrivalTime, setArrivalTime] = useState(initialArrivalTime);
   const [departureTime, setDepartureTime] = useState(initialDepartureTime);
+
+  // Sync state when dialog opens with new initial values
+  useEffect(() => {
+    if (open) {
+      setArrivalTime(initialArrivalTime);
+      setDepartureTime(initialDepartureTime);
+    }
+  }, [open, initialArrivalTime, initialDepartureTime]);
 
   const handleConfirm = () => {
     onConfirm(arrivalTime, departureTime);
