@@ -88,27 +88,25 @@ export function Navbar({ onSearch }: NavbarProps) {
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-4 md:flex">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/reports">
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Relatórios
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/charts">
+                <PieChart className="mr-2 h-4 w-4" />
+                Gráficos
+              </Link>
+            </Button>
             {isAdmin && (
-              <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/admin">
-                    <Users className="mr-2 h-4 w-4" />
-                    Admin
-                  </Link>
-                </Button>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/reports">
-                    <BarChart3 className="mr-2 h-4 w-4" />
-                    Relatórios
-                  </Link>
-                </Button>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/charts">
-                    <PieChart className="mr-2 h-4 w-4" />
-                    Gráficos
-                  </Link>
-                </Button>
-              </>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/admin">
+                  <Users className="mr-2 h-4 w-4" />
+                  Admin
+                </Link>
+              </Button>
             )}
             
             <DropdownMenu>
@@ -188,27 +186,25 @@ export function Navbar({ onSearch }: NavbarProps) {
 
             {/* Mobile Nav Items */}
             <div className="flex flex-col gap-2">
+              <Button variant="ghost" className="justify-start" asChild>
+                <Link to="/reports">
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Relatórios
+                </Link>
+              </Button>
+              <Button variant="ghost" className="justify-start" asChild>
+                <Link to="/charts">
+                  <PieChart className="mr-2 h-4 w-4" />
+                  Gráficos
+                </Link>
+              </Button>
               {isAdmin && (
-                <>
-                  <Button variant="ghost" className="justify-start" asChild>
-                    <Link to="/admin">
-                      <Users className="mr-2 h-4 w-4" />
-                      Admin
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" className="justify-start" asChild>
-                    <Link to="/reports">
-                      <BarChart3 className="mr-2 h-4 w-4" />
-                      Relatórios
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" className="justify-start" asChild>
-                    <Link to="/charts">
-                      <PieChart className="mr-2 h-4 w-4" />
-                      Gráficos
-                    </Link>
-                  </Button>
-                </>
+                <Button variant="ghost" className="justify-start" asChild>
+                  <Link to="/admin">
+                    <Users className="mr-2 h-4 w-4" />
+                    Admin
+                  </Link>
+                </Button>
               )}
               <Button variant="ghost" className="justify-start" onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>
                 <User className="mr-2 h-4 w-4" />

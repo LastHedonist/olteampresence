@@ -51,7 +51,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function Reports() {
-  const { user, isLoading: authLoading, isAdmin } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), 'yyyy-MM'));
 
@@ -192,11 +192,6 @@ export default function Reports() {
 
   if (!user) {
     navigate('/auth');
-    return null;
-  }
-
-  if (!isAdmin) {
-    navigate('/');
     return null;
   }
 

@@ -51,7 +51,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function Charts() {
-  const { user, isLoading: authLoading, isAdmin } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState(() => format(new Date(), 'yyyy-MM'));
 
@@ -153,11 +153,6 @@ export default function Charts() {
 
   if (!user) {
     navigate('/auth');
-    return null;
-  }
-
-  if (!isAdmin) {
-    navigate('/');
     return null;
   }
 
