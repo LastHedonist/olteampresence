@@ -1,4 +1,4 @@
-import { Building2, Home, Coffee, Plane, Plus } from 'lucide-react';
+import { Building2, Home, Coffee, Plane, Plus, Clock } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,9 +8,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { LocationStatus, getStatusConfig, STATUS_OPTIONS } from '@/hooks/useLocations';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface LocationCellProps {
   status?: LocationStatus;
+  arrivalTime?: string | null;
+  departureTime?: string | null;
   canEdit: boolean;
   onSelect: (status: LocationStatus) => void;
 }
@@ -22,9 +25,12 @@ const iconMap = {
   Plane,
 };
 
-export function LocationCell({ status, canEdit, onSelect }: LocationCellProps) {
+export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSelect }: LocationCellProps) {
   const config = status ? getStatusConfig(status) : null;
   const Icon = config ? iconMap[config.icon as keyof typeof iconMap] : null;
+
+  const hasOfficeTime = status === 'office' && arrivalTime && departureTime;
+  const timeDisplay = hasOfficeTime ? `${arrivalTime} - ${departureTime}` : null;
 
   if (!canEdit) {
     if (!status) {
@@ -35,7 +41,7 @@ export function LocationCell({ status, canEdit, onSelect }: LocationCellProps) {
       );
     }
 
-    return (
+    const content = (
       <div
         className={cn(
           'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium',
@@ -46,29 +52,59 @@ export function LocationCell({ status, canEdit, onSelect }: LocationCellProps) {
         <span className="hidden sm:inline">{config?.shortLabel}</span>
       </div>
     );
+
+    if (timeDisplay) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {content}
+          </TooltipTrigger>
+          <TooltipContent>
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              <span>{timeDisplay}</span>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return content;
   }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className={cn(
-            'h-auto w-full min-h-[36px] px-2 py-1',
-            status && config?.color,
-            !status && 'border border-dashed border-muted-foreground/30 hover:border-primary/50'
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                'h-auto w-full min-h-[36px] px-2 py-1',
+                status && config?.color,
+                !status && 'border border-dashed border-muted-foreground/30 hover:border-primary/50'
+              )}
+            >
+              {status && Icon ? (
+                <div className="flex items-center gap-1.5">
+                  <Icon className="h-3 w-3" />
+                  <span className="hidden sm:inline text-xs">{config?.shortLabel}</span>
+                </div>
+              ) : (
+                <Plus className="h-4 w-4 text-muted-foreground" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          {timeDisplay && (
+            <TooltipContent>
+              <div className="flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                <span>{timeDisplay}</span>
+              </div>
+            </TooltipContent>
           )}
-        >
-          {status && Icon ? (
-            <div className="flex items-center gap-1.5">
-              <Icon className="h-3 w-3" />
-              <span className="hidden sm:inline text-xs">{config?.shortLabel}</span>
-            </div>
-          ) : (
-            <Plus className="h-4 w-4 text-muted-foreground" />
-          )}
-        </Button>
+        </Tooltip>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" className="w-40 bg-popover">
         {STATUS_OPTIONS.map((option) => {
