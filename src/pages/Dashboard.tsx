@@ -124,7 +124,7 @@ export default function Dashboard() {
         {/* Role Badge */}
         <div className="flex items-center gap-2">
           <Badge variant={isAdmin ? 'default' : 'secondary'}>
-            {isAdmin ? 'Administrador' : 'Funcionário'}
+            {isAdmin ? 'Administrador' : 'Recurso'}
           </Badge>
         </div>
 

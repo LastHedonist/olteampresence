@@ -44,7 +44,7 @@ export function WeeklyTable({
         <TableHeader>
           <TableRow>
             <TableHead className="min-w-[180px] sticky left-0 bg-background z-10">
-              Funcionário
+              Recurso
             </TableHead>
             {weekDays.map((day) => (
               <TableHead

@@ -159,7 +159,7 @@ export default function Reports() {
   }, [userStats]);
 
   const handleExportCSV = () => {
-    const headers = ['Funcionário', 'Escritório', 'Home Office', 'Day Off', 'Férias', 'Total Registros'];
+    const headers = ['Recurso', 'Escritório', 'Home Office', 'Day Off', 'Férias', 'Total Registros'];
     const rows = userStats.map(stat => [
       stat.name,
       stat.office,
@@ -287,7 +287,7 @@ export default function Reports() {
         {/* Details Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Detalhamento por Funcionário</CardTitle>
+            <CardTitle>Detalhamento por Recurso</CardTitle>
             <CardDescription>
               {workingDaysInMonth} dias úteis no mês selecionado
             </CardDescription>
@@ -302,7 +302,7 @@ export default function Reports() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Funcionário</TableHead>
+                      <TableHead>Recurso</TableHead>
                       <TableHead className="text-center">Escritório</TableHead>
                       <TableHead className="text-center">Home Office</TableHead>
                       <TableHead className="text-center">Day Off</TableHead>

@@ -79,7 +79,7 @@ export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
         ) : filteredUsers.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <p className="text-muted-foreground">
-              {searchQuery ? 'Nenhum funcionário encontrado' : 'Nenhum funcionário cadastrado'}
+              {searchQuery ? 'Nenhum recurso encontrado' : 'Nenhum recurso cadastrado'}
             </p>
           </div>
         ) : (

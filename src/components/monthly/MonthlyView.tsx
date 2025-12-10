@@ -82,7 +82,7 @@ export function MonthlyView({ searchQuery = '' }: MonthlyViewProps) {
         )}
 
         <div className="text-center text-sm text-muted-foreground">
-          {filteredUsers.length} funcionário{filteredUsers.length !== 1 ? 's' : ''} •
+          {filteredUsers.length} recurso{filteredUsers.length !== 1 ? 's' : ''} •
           Passe o mouse sobre os indicadores para ver detalhes
         </div>
       </CardContent>

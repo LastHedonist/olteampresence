@@ -225,7 +225,7 @@ export default function Charts() {
             {/* Bar Chart - By Employee */}
             <Card>
               <CardHeader>
-                <CardTitle>Por Funcionário</CardTitle>
+                <CardTitle>Por Recurso</CardTitle>
                 <CardDescription>
                   Comparativo de status por pessoa
                 </CardDescription>
