@@ -52,6 +52,7 @@ export function UserList({ users, onToggleActive, onUpdateUser, onUpdateRole }: 
             <TableRow>
               <TableHead>Usuário</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Função</TableHead>
               <TableHead>Papel</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Criado em</TableHead>
@@ -72,6 +73,7 @@ export function UserList({ users, onToggleActive, onUpdateUser, onUpdateRole }: 
                   </div>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                <TableCell className="text-muted-foreground">{user.job_function}</TableCell>
                 <TableCell>
                   <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                     {user.role === 'admin' ? (

@@ -8,6 +8,7 @@ export interface AdminUser {
   id: string;
   email: string;
   full_name: string;
+  job_function: string;
   avatar_url: string | null;
   is_active: boolean;
   role: AppRole;
@@ -43,6 +44,7 @@ export function useAdminUsers() {
           id: profile.id,
           email: profile.email,
           full_name: profile.full_name,
+          job_function: profile.job_function,
           avatar_url: profile.avatar_url,
           is_active: profile.is_active,
           role: (userRole?.role as AppRole) || 'employee',
