@@ -150,9 +150,9 @@ export default function Auth() {
         <img 
           src={overlabsLogo} 
           alt="Overlabs - Simplify to Amplify" 
-          className="h-16 w-auto mb-3"
+          className="h-28 w-auto mb-3"
         />
-        <p className="text-sm text-muted-foreground">Work Mode</p>
+        <p className="text-2xl font-bold text-muted-foreground">Work Mode</p>
       </div>
 
       <Card className="w-full max-w-md shadow-xl">
