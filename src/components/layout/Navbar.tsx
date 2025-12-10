@@ -20,11 +20,11 @@ import {
   User, 
   Settings,
   Users,
-  Calendar,
   BarChart3,
   PieChart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import overlabsLogo from '@/assets/overlabs-logo.png';
 
 interface NavbarProps {
   onSearch?: (query: string) => void;
@@ -62,12 +62,14 @@ export function Navbar({ onSearch }: NavbarProps) {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <Calendar className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <span className="hidden text-xl font-semibold text-foreground sm:block">
-                Overlabs Work Mode
+            <Link to="/" className="flex items-center gap-3">
+              <img 
+                src={overlabsLogo} 
+                alt="Overlabs" 
+                className="h-8 w-auto"
+              />
+              <span className="hidden text-sm font-medium text-muted-foreground sm:block">
+                Work Mode
               </span>
             </Link>
           </div>
