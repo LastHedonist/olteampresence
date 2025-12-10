@@ -16,23 +16,26 @@ import { AdminUser } from '@/hooks/useAdminUsers';
 
 const editUserSchema = z.object({
   full_name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100),
+  job_function: z.string().min(2, 'Função deve ter no mínimo 2 caracteres').max(100),
 });
 
 interface EditUserDialogProps {
   user: AdminUser | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (updates: { full_name: string }) => Promise<void>;
+  onSave: (updates: { full_name: string; job_function: string }) => Promise<void>;
 }
 
 export function EditUserDialog({ user, open, onOpenChange, onSave }: EditUserDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [fullName, setFullName] = useState('');
+  const [jobFunction, setJobFunction] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
       setFullName(user.full_name);
+      setJobFunction(user.job_function || '');
       setError(null);
     }
   }, [user]);
@@ -41,14 +44,14 @@ export function EditUserDialog({ user, open, onOpenChange, onSave }: EditUserDia
     e.preventDefault();
     setError(null);
 
-    const validation = editUserSchema.safeParse({ full_name: fullName });
+    const validation = editUserSchema.safeParse({ full_name: fullName, job_function: jobFunction });
     if (!validation.success) {
       setError(validation.error.errors[0]?.message || 'Erro de validação');
       return;
     }
 
     setIsLoading(true);
-    await onSave({ full_name: fullName.trim() });
+    await onSave({ full_name: fullName.trim(), job_function: jobFunction.trim() });
     setIsLoading(false);
   };
 
@@ -79,6 +82,16 @@ export function EditUserDialog({ user, open, onOpenChange, onSave }: EditUserDia
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="João Silva"
+                disabled={isLoading}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-jobFunction">Função</Label>
+              <Input
+                id="edit-jobFunction"
+                value={jobFunction}
+                onChange={(e) => setJobFunction(e.target.value)}
+                placeholder="Desenvolvedor"
                 disabled={isLoading}
               />
               {error && <p className="text-sm text-destructive">{error}</p>}

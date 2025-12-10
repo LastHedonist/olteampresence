@@ -61,7 +61,7 @@ export function useAdminUsers() {
     }
   }, []);
 
-  const updateUser = async (userId: string, updates: { full_name?: string; is_active?: boolean }) => {
+  const updateUser = async (userId: string, updates: { full_name?: string; is_active?: boolean; job_function?: string }) => {
     try {
       const { error } = await supabase
         .from('profiles')

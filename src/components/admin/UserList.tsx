@@ -27,7 +27,7 @@ import { useAuth } from '@/contexts/AuthContext';
 interface UserListProps {
   users: AdminUser[];
   onToggleActive: (userId: string, isActive: boolean) => Promise<{ success: boolean }>;
-  onUpdateUser: (userId: string, updates: { full_name?: string }) => Promise<{ success: boolean }>;
+  onUpdateUser: (userId: string, updates: { full_name?: string; job_function?: string }) => Promise<{ success: boolean }>;
   onUpdateRole: (userId: string, role: AppRole) => Promise<{ success: boolean }>;
 }
 
