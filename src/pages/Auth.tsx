@@ -12,7 +12,11 @@ import { z } from 'zod';
 import overlabsLogo from '@/assets/overlabs-logo.png';
 
 const emailSchema = z.string().email('Email inválido');
-const passwordSchema = z.string().min(6, 'Senha deve ter pelo menos 6 caracteres');
+const passwordSchema = z.string()
+  .min(8, 'Senha deve ter pelo menos 8 caracteres')
+  .regex(/[a-z]/, 'Senha deve conter pelo menos uma letra minúscula')
+  .regex(/[A-Z]/, 'Senha deve conter pelo menos uma letra maiúscula')
+  .regex(/[0-9]/, 'Senha deve conter pelo menos um número');
 const nameSchema = z.string().min(2, 'Nome deve ter pelo menos 2 caracteres');
 
 export default function Auth() {
