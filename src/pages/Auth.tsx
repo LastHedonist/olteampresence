@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import overlabsLogo from '@/assets/overlabs-logo.png';
 
@@ -26,6 +27,7 @@ export default function Auth() {
   
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   
   // Login form
   const [loginEmail, setLoginEmail] = useState('');
@@ -36,6 +38,9 @@ export default function Auth() {
   const [registerEmail, setRegisterEmail] = useState('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
+
+  // Forgot password form
+  const [resetEmail, setResetEmail] = useState('');
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -139,10 +144,114 @@ export default function Auth() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      emailSchema.parse(resetEmail);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          variant: 'destructive',
+          title: 'Erro de validação',
+          description: error.errors[0].message,
+        });
+      }
+      return;
+    }
+
+    setIsLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: `${window.location.origin}/`,
+    });
+    setIsLoading(false);
+
+    if (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Erro ao enviar email',
+        description: error.message,
+      });
+    } else {
+      toast({
+        title: 'Email enviado!',
+        description: 'Verifique sua caixa de entrada para redefinir sua senha.',
+      });
+      setShowForgotPassword(false);
+      setResetEmail('');
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Forgot Password View
+  if (showForgotPassword) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
+        {/* Logo */}
+        <div className="mb-8 flex flex-col items-center">
+          <img 
+            src={overlabsLogo} 
+            alt="Overlabs - Simplify to Amplify" 
+            className="h-28 w-auto mb-3"
+          />
+          <p className="text-2xl font-bold text-muted-foreground">Work Mode</p>
+        </div>
+
+        <Card className="w-full max-w-md shadow-xl">
+          <CardHeader>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-fit -ml-2 mb-2"
+              onClick={() => setShowForgotPassword(false)}
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar
+            </Button>
+            <CardTitle>Recuperar senha</CardTitle>
+            <CardDescription>
+              Digite seu email para receber um link de recuperação de senha.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="reset-email">Email</Label>
+                <Input
+                  id="reset-email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  'Enviar link de recuperação'
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Sistema de gestão de disponibilidade para equipes híbridas
+        </p>
       </div>
     );
   }
@@ -212,6 +321,15 @@ export default function Auth() {
                     </Button>
                   </div>
                 </div>
+
+                <Button
+                  type="button"
+                  variant="link"
+                  className="px-0 h-auto font-normal text-sm text-muted-foreground hover:text-primary"
+                  onClick={() => setShowForgotPassword(true)}
+                >
+                  Esqueci minha senha
+                </Button>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
