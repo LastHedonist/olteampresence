@@ -7,8 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { z } from 'zod';
+import overlabsLogo from '@/assets/overlabs-logo.png';
 
 const emailSchema = z.string().email('Email inválido');
 const passwordSchema = z.string().min(6, 'Senha deve ter pelo menos 6 caracteres');
@@ -145,14 +146,13 @@ export default function Auth() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
       {/* Logo */}
-      <div className="mb-8 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg">
-          <Calendar className="h-7 w-7 text-primary-foreground" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Overlabs Work Mode</h1>
-          <p className="text-sm text-muted-foreground">Gestão de Disponibilidade</p>
-        </div>
+      <div className="mb-8 flex flex-col items-center">
+        <img 
+          src={overlabsLogo} 
+          alt="Overlabs - Simplify to Amplify" 
+          className="h-16 w-auto mb-3"
+        />
+        <p className="text-sm text-muted-foreground">Work Mode</p>
       </div>
 
       <Card className="w-full max-w-md shadow-xl">
