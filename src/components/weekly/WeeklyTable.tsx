@@ -1,4 +1,4 @@
-import { format, isToday, isBefore, startOfDay } from 'date-fns';
+import { format, isToday, isBefore, startOfDay, isWeekend } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Building2, Home, Coffee, Plane } from 'lucide-react';
 import {
@@ -97,7 +97,9 @@ export function WeeklyTable({
               </TableCell>
               {weekDays.map((day) => {
                 const dateStr = format(day, 'yyyy-MM-dd');
-                const status = user.locations[dateStr];
+                const savedStatus = user.locations[dateStr];
+                // Default weekends to day_off if no status is set
+                const status = savedStatus ?? (isWeekend(day) ? 'day_off' : undefined);
                 const isCurrentUser = user.id === currentUserId;
                 const isPastDay = isBefore(startOfDay(day), startOfDay(new Date()));
                 const canEditCell = isCurrentUser && canEdit && !isPastDay;
