@@ -74,9 +74,9 @@ export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSe
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Tooltip>
-          <TooltipTrigger asChild>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="sm"
@@ -95,17 +95,17 @@ export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSe
                 <Plus className="h-4 w-4 text-muted-foreground" />
               )}
             </Button>
-          </TooltipTrigger>
-          {timeDisplay && (
-            <TooltipContent>
-              <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                <span>{timeDisplay}</span>
-              </div>
-            </TooltipContent>
-          )}
-        </Tooltip>
-      </DropdownMenuTrigger>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        {timeDisplay && (
+          <TooltipContent>
+            <div className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              <span>{timeDisplay}</span>
+            </div>
+          </TooltipContent>
+        )}
+      </Tooltip>
       <DropdownMenuContent align="center" className="w-40 bg-popover">
         {STATUS_OPTIONS.map((option) => {
           const optionConfig = getStatusConfig(option.value);
