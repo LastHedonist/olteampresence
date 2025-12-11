@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { format, isSameDay, isToday, isBefore, startOfDay } from 'date-fns';
+import { format, isBefore, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,10 @@ export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
   const [weekOffset, setWeekOffset] = useState(0);
   const { allUsersLocations, isLoading, weekDays, weekStart, weekEnd, updateLocation, deleteLocation } = useLocations(weekOffset);
   const { user } = useAuth();
+
+  // Format date strings for checkin hook
+  const startDateStr = format(weekStart, 'yyyy-MM-dd');
+  const endDateStr = format(weekEnd, 'yyyy-MM-dd');
 
   // Filter by search query
   const filteredUsers = allUsersLocations.filter((u) =>
@@ -97,6 +101,8 @@ export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
             onUpdateLocation={updateLocation}
             onDeleteLocation={deleteLocation}
             canEdit={canEditWeek}
+            startDate={startDateStr}
+            endDate={endDateStr}
           />
         )}
       </CardContent>

@@ -50,6 +50,36 @@ export type Database = {
         }
         Relationships: []
       }
+      office_checkins: {
+        Row: {
+          checked_in_at: string
+          created_at: string
+          date: string
+          id: string
+          user_id: string
+          validated_at: string | null
+          validated_by: string | null
+        }
+        Insert: {
+          checked_in_at?: string
+          created_at?: string
+          date: string
+          id?: string
+          user_id: string
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Update: {
+          checked_in_at?: string
+          created_at?: string
+          date?: string
+          id?: string
+          user_id?: string
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
