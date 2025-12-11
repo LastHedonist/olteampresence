@@ -1,6 +1,12 @@
-import { Check, X } from 'lucide-react';
+import { Check, X, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface PasswordRequirementsProps {
   password: string;
@@ -54,7 +60,19 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
       {password.length > 0 && (
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Força da senha</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-muted-foreground">Força da senha</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[200px] text-center">
+                    <p className="text-xs">A força é calculada com base nos requisitos atendidos: maiúscula, minúscula, número e tamanho mínimo.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <span className={cn("font-medium transition-colors", color)}>{label}</span>
           </div>
           <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
