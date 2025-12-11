@@ -21,10 +21,15 @@ import { z } from 'zod';
 
 type ResourceGroup = 'head' | 'lead' | 'equipe';
 
+const RESOURCE_GROUP_LABELS: Record<ResourceGroup, string> = {
+  head: 'Head',
+  lead: 'Lead',
+  equipe: 'Equipe',
+};
+
 const profileSchema = z.object({
   fullName: z.string().trim().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
   jobFunction: z.string().trim().min(1, 'Função é obrigatória').max(100, 'Função muito longa'),
-  resourceGroup: z.enum(['head', 'lead', 'equipe']),
 });
 
 export default function Profile() {
@@ -34,7 +39,7 @@ export default function Profile() {
   const [jobFunction, setJobFunction] = useState('');
   const [resourceGroup, setResourceGroup] = useState<ResourceGroup>('equipe');
   const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState<{ fullName?: string; jobFunction?: string; resourceGroup?: string }>({});
+  const [errors, setErrors] = useState<{ fullName?: string; jobFunction?: string }>({});
 
   useEffect(() => {
     if (profile) {
@@ -73,13 +78,12 @@ export default function Profile() {
 
     setErrors({});
     
-    const result = profileSchema.safeParse({ fullName, jobFunction, resourceGroup });
+    const result = profileSchema.safeParse({ fullName, jobFunction });
     if (!result.success) {
-      const fieldErrors: { fullName?: string; jobFunction?: string; resourceGroup?: string } = {};
+      const fieldErrors: { fullName?: string; jobFunction?: string } = {};
       result.error.errors.forEach((err) => {
         if (err.path[0] === 'fullName') fieldErrors.fullName = err.message;
         if (err.path[0] === 'jobFunction') fieldErrors.jobFunction = err.message;
-        if (err.path[0] === 'resourceGroup') fieldErrors.resourceGroup = err.message;
       });
       setErrors(fieldErrors);
       return;
@@ -92,7 +96,6 @@ export default function Profile() {
         .update({ 
           full_name: fullName.trim(),
           job_function: jobFunction.trim(),
-          resource_group: resourceGroup
         })
         .eq('id', user.id);
 
@@ -172,23 +175,16 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="resourceGroup">Grupo *</Label>
-                <Select
-                  value={resourceGroup}
-                  onValueChange={(value) => setResourceGroup(value as ResourceGroup)}
-                >
-                  <SelectTrigger className={errors.resourceGroup ? 'border-destructive' : ''}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="head">Head</SelectItem>
-                    <SelectItem value="lead">Lead</SelectItem>
-                    <SelectItem value="equipe">Equipe</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.resourceGroup && (
-                  <p className="text-xs text-destructive">{errors.resourceGroup}</p>
-                )}
+                <Label htmlFor="resourceGroup">Grupo</Label>
+                <Input
+                  id="resourceGroup"
+                  value={RESOURCE_GROUP_LABELS[resourceGroup]}
+                  disabled
+                  className="bg-muted"
+                />
+                <p className="text-xs text-muted-foreground">
+                  O grupo só pode ser alterado por um administrador.
+                </p>
               </div>
 
               <div className="space-y-2">
