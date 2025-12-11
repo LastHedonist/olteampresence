@@ -22,12 +22,19 @@ export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
     u.full_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Sort users: current user first, then alphabetically by name
-  const sortedUsers = [...filteredUsers].sort((a, b) => {
-    if (a.id === user?.id) return -1;
-    if (b.id === user?.id) return 1;
-    return a.full_name.localeCompare(b.full_name, 'pt-BR');
-  });
+  // Group users by resource_group, with current user first within their group
+  const groupOrder: Array<'head' | 'lead' | 'equipe'> = ['head', 'lead', 'equipe'];
+  
+  const groupedUsers = groupOrder.map((group) => {
+    const usersInGroup = filteredUsers
+      .filter((u) => u.resource_group === group)
+      .sort((a, b) => {
+        if (a.id === user?.id) return -1;
+        if (b.id === user?.id) return 1;
+        return a.full_name.localeCompare(b.full_name, 'pt-BR');
+      });
+    return { group, users: usersInGroup };
+  }).filter((g) => g.users.length > 0);
 
   const canEditWeek = !isBefore(startOfDay(weekEnd), startOfDay(new Date()));
 
@@ -84,7 +91,7 @@ export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
           </div>
         ) : (
           <WeeklyTable
-            users={sortedUsers}
+            groupedUsers={groupedUsers}
             weekDays={weekDays}
             currentUserId={user?.id}
             onUpdateLocation={updateLocation}

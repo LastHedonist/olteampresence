@@ -54,6 +54,7 @@ export function useMonthlyLocations(monthOffset: number = 0) {
           id: profile.id,
           full_name: profile.full_name,
           avatar_url: profile.avatar_url,
+          resource_group: profile.resource_group as 'head' | 'lead' | 'equipe',
           locations: userLocations,
         };
       });

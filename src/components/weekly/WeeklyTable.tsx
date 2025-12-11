@@ -13,11 +13,22 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LocationCell } from './LocationCell';
 import { OfficeTimeDialog } from './OfficeTimeDialog';
-import { UserWithLocations, LocationStatus, LocationData } from '@/hooks/useLocations';
+import { UserWithLocations, LocationStatus, LocationData, ResourceGroup } from '@/hooks/useLocations';
 import { cn } from '@/lib/utils';
 
-interface WeeklyTableProps {
+const GROUP_LABELS: Record<ResourceGroup, string> = {
+  head: 'Head',
+  lead: 'Lead',
+  equipe: 'Equipe',
+};
+
+interface GroupedUsers {
+  group: ResourceGroup;
   users: UserWithLocations[];
+}
+
+interface WeeklyTableProps {
+  groupedUsers: GroupedUsers[];
   weekDays: Date[];
   currentUserId?: string;
   onUpdateLocation: (date: Date, status: LocationStatus, notes?: string, arrivalTime?: string, departureTime?: string) => void;
@@ -26,7 +37,7 @@ interface WeeklyTableProps {
 }
 
 export function WeeklyTable({
-  users,
+  groupedUsers,
   weekDays,
   currentUserId,
   onUpdateLocation,
@@ -108,58 +119,74 @@ export function WeeklyTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
-              <TableRow
-                key={user.id}
-                className={cn(
-                  user.id === currentUserId && 'bg-accent/50'
-                )}
-              >
-                <TableCell className="sticky left-0 bg-background z-10">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar_url || undefined} />
-                      <AvatarFallback className="text-xs">
-                        {getInitials(user.full_name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium">{user.full_name}</span>
-                      {user.id === currentUserId && (
-                        <span className="text-xs text-muted-foreground">Você</span>
-                      )}
-                    </div>
-                  </div>
-                </TableCell>
-                {weekDays.map((day) => {
-                  const dateStr = format(day, 'yyyy-MM-dd');
-                  const locationData = user.locations[dateStr];
-                  // Default weekends to day_off if no status is set
-                  const status = locationData?.status ?? (isWeekend(day) ? 'day_off' : undefined);
-                  const isCurrentUser = user.id === currentUserId;
-                  const isPastDay = isBefore(startOfDay(day), startOfDay(new Date()));
-                  const canEditCell = isCurrentUser && canEdit && !isPastDay;
-
-                  return (
-                    <TableCell
-                      key={day.toISOString()}
-                      className={cn(
-                        'text-center p-1',
-                        isToday(day) && 'bg-primary/5'
-                      )}
-                    >
-                      <LocationCell
-                        status={status}
-                        arrivalTime={locationData?.arrival_time}
-                        departureTime={locationData?.departure_time}
-                        canEdit={canEditCell}
-                        onSelect={(newStatus) => handleStatusSelect(day, newStatus, locationData)}
-                        onClear={() => onDeleteLocation(day)}
-                      />
+            {groupedUsers.map(({ group, users }) => (
+              <>
+                {/* Group header row */}
+                <TableRow key={`group-${group}`} className="bg-muted/50 hover:bg-muted/50">
+                  <TableCell 
+                    colSpan={weekDays.length + 1}
+                    className="sticky left-0 bg-muted/50 z-10 py-2"
+                  >
+                    <span className="text-sm font-semibold text-muted-foreground">
+                      {GROUP_LABELS[group]}
+                    </span>
+                  </TableCell>
+                </TableRow>
+                {/* Users in this group */}
+                {users.map((user) => (
+                  <TableRow
+                    key={user.id}
+                    className={cn(
+                      user.id === currentUserId && 'bg-accent/50'
+                    )}
+                  >
+                    <TableCell className="sticky left-0 bg-background z-10">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={user.avatar_url || undefined} />
+                          <AvatarFallback className="text-xs">
+                            {getInitials(user.full_name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">{user.full_name}</span>
+                          {user.id === currentUserId && (
+                            <span className="text-xs text-muted-foreground">Você</span>
+                          )}
+                        </div>
+                      </div>
                     </TableCell>
-                  );
-                })}
-              </TableRow>
+                    {weekDays.map((day) => {
+                      const dateStr = format(day, 'yyyy-MM-dd');
+                      const locationData = user.locations[dateStr];
+                      // Default weekends to day_off if no status is set
+                      const status = locationData?.status ?? (isWeekend(day) ? 'day_off' : undefined);
+                      const isCurrentUser = user.id === currentUserId;
+                      const isPastDay = isBefore(startOfDay(day), startOfDay(new Date()));
+                      const canEditCell = isCurrentUser && canEdit && !isPastDay;
+
+                      return (
+                        <TableCell
+                          key={day.toISOString()}
+                          className={cn(
+                            'text-center p-1',
+                            isToday(day) && 'bg-primary/5'
+                          )}
+                        >
+                          <LocationCell
+                            status={status}
+                            arrivalTime={locationData?.arrival_time}
+                            departureTime={locationData?.departure_time}
+                            canEdit={canEditCell}
+                            onSelect={(newStatus) => handleStatusSelect(day, newStatus, locationData)}
+                            onClear={() => onDeleteLocation(day)}
+                          />
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </>
             ))}
           </TableBody>
         </Table>
