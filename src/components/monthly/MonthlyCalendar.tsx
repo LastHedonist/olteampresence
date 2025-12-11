@@ -101,7 +101,9 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
                 'relative flex aspect-[4/3] flex-col rounded-lg border border-border p-1 transition-colors',
                 today
                   ? 'border-primary bg-primary/5'
-                  : 'hover:bg-muted/30'
+                  : isWeekend(day)
+                    ? 'bg-muted/50'
+                    : 'hover:bg-muted/30'
               )}
             >
               {/* Day number */}
