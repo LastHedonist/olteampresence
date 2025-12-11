@@ -154,7 +154,7 @@ export default function Dashboard() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-4xl font-bold">{stat.value}</div>
               </CardContent>
             </Card>
           ))}
