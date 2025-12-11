@@ -1,4 +1,4 @@
-import { Check, X, Info } from 'lucide-react';
+import { Check, X, Info, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -57,6 +57,7 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
   ];
 
   const metCount = requirements.filter(r => r.met).length;
+  const allMet = metCount === requirements.length;
   const strengthPercent = (metCount / requirements.length) * 100;
   const { label, color, progressColor } = getStrengthInfo(metCount);
 
@@ -88,11 +89,18 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
           </div>
         </div>
       )}
-      <div className="space-y-1.5">
-        {requirements.map((req, index) => (
-          <Requirement key={index} met={req.met} label={req.label} />
-        ))}
-      </div>
+      {allMet ? (
+        <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 animate-fade-in">
+          <ShieldCheck className="h-4 w-4" />
+          <span className="font-medium">Senha segura! Todos os requisitos foram atendidos.</span>
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          {requirements.map((req, index) => (
+            <Requirement key={index} met={req.met} label={req.label} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
