@@ -56,9 +56,9 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
   const { label, color, progressColor } = getStrengthInfo(metCount);
 
   return (
-    <div className="space-y-3 rounded-md bg-muted/50 p-3">
+    <div className="space-y-3 rounded-md bg-muted/50 p-3 animate-fade-in">
       {password.length > 0 && (
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 animate-fade-in">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-1.5">
               <span className="text-muted-foreground">Força da senha</span>
