@@ -21,6 +21,7 @@ interface WeeklyTableProps {
   weekDays: Date[];
   currentUserId?: string;
   onUpdateLocation: (date: Date, status: LocationStatus, notes?: string, arrivalTime?: string, departureTime?: string) => void;
+  onDeleteLocation: (date: Date) => void;
   canEdit: boolean;
 }
 
@@ -29,6 +30,7 @@ export function WeeklyTable({
   weekDays,
   currentUserId,
   onUpdateLocation,
+  onDeleteLocation,
   canEdit,
 }: WeeklyTableProps) {
   const [officeTimeDialog, setOfficeTimeDialog] = useState<{
@@ -152,6 +154,7 @@ export function WeeklyTable({
                         departureTime={locationData?.departure_time}
                         canEdit={canEditCell}
                         onSelect={(newStatus) => handleStatusSelect(day, newStatus, locationData)}
+                        onClear={() => onDeleteLocation(day)}
                       />
                     </TableCell>
                   );

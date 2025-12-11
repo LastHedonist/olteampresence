@@ -156,6 +156,28 @@ export function useLocations(weekOffset: number = 0) {
     }
   };
 
+  const deleteLocation = async (date: Date) => {
+    if (!user) return;
+
+    const dateStr = format(date, 'yyyy-MM-dd');
+
+    try {
+      const { error } = await supabase
+        .from('locations')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('date', dateStr);
+
+      if (error) throw error;
+
+      toast.success('Disponibilidade removida');
+      fetchLocations();
+    } catch (error) {
+      console.error('Error deleting location:', error);
+      toast.error('Erro ao remover disponibilidade');
+    }
+  };
+
   useEffect(() => {
     fetchLocations();
   }, [fetchLocations]);
@@ -168,6 +190,7 @@ export function useLocations(weekOffset: number = 0) {
     weekStart,
     weekEnd,
     updateLocation,
+    deleteLocation,
     refetch: fetchLocations,
   };
 }
