@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import overlabsLogo from '@/assets/overlabs-logo.png';
+import { PasswordRequirements } from '@/components/auth/PasswordRequirements';
 
 const emailSchema = z.string().email('Email inválido');
 const passwordSchema = z.string()
@@ -399,6 +400,7 @@ export default function Auth() {
                       )}
                     </Button>
                   </div>
+                  <PasswordRequirements password={registerPassword} />
                 </div>
 
                 <div className="space-y-2">
