@@ -17,6 +17,8 @@ export interface Location {
   departure_time: string | null;
 }
 
+export type ResourceGroup = 'head' | 'lead' | 'equipe';
+
 export interface LocationData {
   status: LocationStatus;
   arrival_time?: string | null;
@@ -27,6 +29,7 @@ export interface UserWithLocations {
   id: string;
   full_name: string;
   avatar_url: string | null;
+  resource_group: ResourceGroup;
   locations: Record<string, LocationData>;
 }
 
@@ -82,6 +85,7 @@ export function useLocations(weekOffset: number = 0) {
           id: profile.id,
           full_name: profile.full_name,
           avatar_url: profile.avatar_url,
+          resource_group: profile.resource_group as ResourceGroup,
           locations: userLocations,
         };
       });

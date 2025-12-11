@@ -119,6 +119,7 @@ export type Database = {
           full_name: string
           id: string
           is_active: boolean
+          resource_group: Database["public"]["Enums"]["resource_group"]
         }[]
       }
       has_role: {
