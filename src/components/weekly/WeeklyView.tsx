@@ -14,7 +14,7 @@ interface WeeklyViewProps {
 
 export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
   const [weekOffset, setWeekOffset] = useState(0);
-  const { allUsersLocations, isLoading, weekDays, weekStart, weekEnd, updateLocation } = useLocations(weekOffset);
+  const { allUsersLocations, isLoading, weekDays, weekStart, weekEnd, updateLocation, deleteLocation } = useLocations(weekOffset);
   const { user } = useAuth();
 
   // Filter by search query
@@ -88,6 +88,7 @@ export function WeeklyView({ searchQuery = '' }: WeeklyViewProps) {
             weekDays={weekDays}
             currentUserId={user?.id}
             onUpdateLocation={updateLocation}
+            onDeleteLocation={deleteLocation}
             canEdit={canEditWeek}
           />
         )}

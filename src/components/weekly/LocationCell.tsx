@@ -1,9 +1,10 @@
-import { Building2, Home, Coffee, Plane, Plus, Clock, Briefcase } from 'lucide-react';
+import { Building2, Home, Coffee, Plane, Plus, Clock, Briefcase, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { LocationStatus, getStatusConfig, STATUS_OPTIONS } from '@/hooks/useLocations';
@@ -16,6 +17,7 @@ interface LocationCellProps {
   departureTime?: string | null;
   canEdit: boolean;
   onSelect: (status: LocationStatus) => void;
+  onClear?: () => void;
 }
 
 const iconMap = {
@@ -26,7 +28,7 @@ const iconMap = {
   Plane,
 };
 
-export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSelect }: LocationCellProps) {
+export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSelect, onClear }: LocationCellProps) {
   const config = status ? getStatusConfig(status) : null;
   const Icon = config ? iconMap[config.icon as keyof typeof iconMap] : null;
 
@@ -141,6 +143,22 @@ export function LocationCell({ status, arrivalTime, departureTime, canEdit, onSe
             </DropdownMenuItem>
           );
         })}
+        {status && onClear && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={onClear}
+              className="cursor-pointer text-destructive focus:text-destructive"
+            >
+              <div className="flex items-center gap-2">
+                <div className="rounded p-1 bg-destructive/10">
+                  <X className="h-3 w-3" />
+                </div>
+                <span>Limpar</span>
+              </div>
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
