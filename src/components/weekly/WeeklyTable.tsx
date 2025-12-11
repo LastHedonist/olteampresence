@@ -98,7 +98,8 @@ export function WeeklyTable({
                   key={day.toISOString()}
                   className={cn(
                     'min-w-[100px] text-center',
-                    isToday(day) && 'bg-primary/10'
+                    isToday(day) && 'bg-primary/10',
+                    !isToday(day) && isWeekend(day) && 'bg-muted/50'
                   )}
                 >
                   <div className="flex flex-col items-center gap-1">
@@ -170,7 +171,8 @@ export function WeeklyTable({
                           key={day.toISOString()}
                           className={cn(
                             'text-center p-1',
-                            isToday(day) && 'bg-primary/5'
+                            isToday(day) && 'bg-primary/5',
+                            !isToday(day) && isWeekend(day) && 'bg-muted/50'
                           )}
                         >
                           <LocationCell
