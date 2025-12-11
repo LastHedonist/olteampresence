@@ -75,7 +75,7 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
         {WEEKDAYS.map((day) => (
           <div
             key={day}
-            className="py-2 text-center text-xs font-medium text-muted-foreground"
+            className="py-2 text-center text-sm font-semibold text-muted-foreground"
           >
             {day}
           </div>
