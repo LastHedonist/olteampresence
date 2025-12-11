@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { format, isToday, isBefore, startOfDay, isWeekend } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Building2, Home, Coffee, Plane } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -13,7 +12,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { LocationCell } from './LocationCell';
 import { OfficeTimeDialog } from './OfficeTimeDialog';
+import { CheckinIndicator } from './CheckinIndicator';
 import { UserWithLocations, LocationStatus, LocationData, ResourceGroup } from '@/hooks/useLocations';
+import { useOfficeCheckins } from '@/hooks/useOfficeCheckins';
 import { cn } from '@/lib/utils';
 
 const GROUP_LABELS: Record<ResourceGroup, string> = {
@@ -34,6 +35,8 @@ interface WeeklyTableProps {
   onUpdateLocation: (date: Date, status: LocationStatus, notes?: string, arrivalTime?: string, departureTime?: string) => void;
   onDeleteLocation: (date: Date) => void;
   canEdit: boolean;
+  startDate: string;
+  endDate: string;
 }
 
 export function WeeklyTable({
@@ -43,6 +46,8 @@ export function WeeklyTable({
   onUpdateLocation,
   onDeleteLocation,
   canEdit,
+  startDate,
+  endDate,
 }: WeeklyTableProps) {
   const [officeTimeDialog, setOfficeTimeDialog] = useState<{
     open: boolean;
@@ -52,6 +57,22 @@ export function WeeklyTable({
   }>({
     open: false,
     date: null,
+  });
+
+  const { 
+    checkIn, 
+    validateCheckin, 
+    cancelCheckin,
+    getCheckinStatus, 
+    canUserValidate 
+  } = useOfficeCheckins(startDate, endDate);
+
+  // Build a map of user names for validation display
+  const userNameMap: Record<string, string> = {};
+  groupedUsers.forEach(({ users }) => {
+    users.forEach(user => {
+      userNameMap[user.id] = user.full_name;
+    });
   });
 
   const getInitials = (name: string) => {
@@ -165,6 +186,15 @@ export function WeeklyTable({
                       const isCurrentUser = user.id === currentUserId;
                       const isPastDay = isBefore(startOfDay(day), startOfDay(new Date()));
                       const canEditCell = isCurrentUser && canEdit && !isPastDay;
+                      
+                      // Check-in status
+                      const isOffice = status === 'office';
+                      const checkinStatus = getCheckinStatus(user.id, dateStr);
+                      const canValidate = canUserValidate(user.id, dateStr);
+                      const canCheckIn = isCurrentUser && isOffice && isToday(day) && checkinStatus.status === 'none';
+                      const validatedByName = checkinStatus.checkin?.validated_by 
+                        ? userNameMap[checkinStatus.checkin.validated_by] 
+                        : undefined;
 
                       return (
                         <TableCell
@@ -175,14 +205,29 @@ export function WeeklyTable({
                             !isToday(day) && isWeekend(day) && 'bg-muted/50'
                           )}
                         >
-                          <LocationCell
-                            status={status}
-                            arrivalTime={locationData?.arrival_time}
-                            departureTime={locationData?.departure_time}
-                            canEdit={canEditCell}
-                            onSelect={(newStatus) => handleStatusSelect(day, newStatus, locationData)}
-                            onClear={() => onDeleteLocation(day)}
-                          />
+                          <div className="flex flex-col items-center gap-1">
+                            <LocationCell
+                              status={status}
+                              arrivalTime={locationData?.arrival_time}
+                              departureTime={locationData?.departure_time}
+                              canEdit={canEditCell}
+                              onSelect={(newStatus) => handleStatusSelect(day, newStatus, locationData)}
+                              onClear={() => onDeleteLocation(day)}
+                            />
+                            {/* Check-in indicator for office status on today */}
+                            {isOffice && isToday(day) && (
+                              <CheckinIndicator
+                                status={checkinStatus.status}
+                                isCurrentUser={isCurrentUser}
+                                canCheckIn={canCheckIn}
+                                canValidate={canValidate}
+                                onCheckIn={() => checkIn(day)}
+                                onValidate={() => checkinStatus.checkin && validateCheckin(checkinStatus.checkin.id, user.id)}
+                                onCancelCheckin={() => cancelCheckin(day)}
+                                validatedByName={validatedByName}
+                              />
+                            )}
+                          </div>
                         </TableCell>
                       );
                     })}
