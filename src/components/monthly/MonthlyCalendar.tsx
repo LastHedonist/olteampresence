@@ -107,7 +107,7 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
               {/* Day number */}
               <span
                 className={cn(
-                  'ml-1 text-xs font-medium',
+                  'ml-1 text-sm font-bold',
                   today ? 'text-primary' : 'text-muted-foreground'
                 )}
               >
