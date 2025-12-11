@@ -16,9 +16,12 @@ export interface OfficeCheckin {
 export type CheckinStatus = 'none' | 'pending' | 'validated';
 
 export function useOfficeCheckins(startDate: string, endDate: string) {
-  const { user } = useAuth();
+  const { user, role, profile } = useAuth();
   const [checkins, setCheckins] = useState<OfficeCheckin[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Check if user is admin or lead (can validate anyone)
+  const isAdminOrLead = role === 'admin' || profile?.resource_group === 'head' || profile?.resource_group === 'lead';
 
   const fetchCheckins = useCallback(async () => {
     if (!user) return;
@@ -155,10 +158,11 @@ export function useOfficeCheckins(startDate: string, endDate: string) {
     const targetCheckin = getCheckinStatus(targetUserId, date);
     if (targetCheckin.status !== 'pending') return false;
     
-    // Check if current user is validated or has admin/lead role for today
-    const myCheckin = getCheckinStatus(user.id, date);
+    // Admin or Lead can validate anyone without needing their own validated check-in
+    if (isAdminOrLead) return true;
     
-    // User can validate if they have a validated check-in for the same date
+    // Regular users can validate if they have a validated check-in for the same date
+    const myCheckin = getCheckinStatus(user.id, date);
     return myCheckin.status === 'validated';
   };
 
@@ -170,6 +174,7 @@ export function useOfficeCheckins(startDate: string, endDate: string) {
     cancelCheckin,
     getCheckinStatus,
     canUserValidate,
+    isAdminOrLead,
     refetch: fetchCheckins,
   };
 }
