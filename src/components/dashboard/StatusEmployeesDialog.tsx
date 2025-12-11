@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Building2, Home, Coffee, Plane, LucideIcon } from 'lucide-react';
+import { Building2, Home, Coffee, Plane, Briefcase, LucideIcon } from 'lucide-react';
 import { LocationStatus } from '@/hooks/useLocations';
 
 interface Employee {
@@ -20,6 +20,7 @@ interface StatusEmployeesDialogProps {
 const STATUS_CONFIG: Record<LocationStatus, { label: string; icon: LucideIcon; color: string }> = {
   office: { label: 'No Escritório', icon: Building2, color: 'text-emerald-600 dark:text-emerald-400' },
   home_office: { label: 'Home Office', icon: Home, color: 'text-blue-600 dark:text-blue-400' },
+  corporate_travel: { label: 'Viagem Corporativa', icon: Briefcase, color: 'text-cyan-600 dark:text-cyan-400' },
   day_off: { label: 'Day Off', icon: Coffee, color: 'text-amber-600 dark:text-amber-400' },
   vacation: { label: 'Férias', icon: Plane, color: 'text-purple-600 dark:text-purple-400' },
 };

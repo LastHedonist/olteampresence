@@ -33,12 +33,13 @@ interface TeamProfile {
 interface LocationData {
   user_id: string;
   date: string;
-  status: 'office' | 'home_office' | 'day_off' | 'vacation';
+  status: 'office' | 'home_office' | 'corporate_travel' | 'day_off' | 'vacation';
 }
 
 const COLORS = {
   office: 'hsl(152, 69%, 41%)',
   home_office: 'hsl(217, 91%, 60%)',
+  corporate_travel: 'hsl(187, 92%, 45%)',
   day_off: 'hsl(38, 92%, 50%)',
   vacation: 'hsl(271, 91%, 65%)',
 };
@@ -46,6 +47,7 @@ const COLORS = {
 const statusLabels: Record<string, string> = {
   office: 'Escritório',
   home_office: 'Home Office',
+  corporate_travel: 'Viagem Corporativa',
   day_off: 'Day Off',
   vacation: 'Férias',
 };
@@ -104,6 +106,7 @@ export default function Charts() {
     const counts = {
       office: 0,
       home_office: 0,
+      corporate_travel: 0,
       day_off: 0,
       vacation: 0,
     };
@@ -130,6 +133,7 @@ export default function Charts() {
         fullName: profile.full_name,
         office: 0,
         home_office: 0,
+        corporate_travel: 0,
         day_off: 0,
         vacation: 0,
       };
@@ -139,7 +143,7 @@ export default function Charts() {
       });
 
       return stats;
-    }).filter(stat => stat.office + stat.home_office + stat.day_off + stat.vacation > 0);
+    }).filter(stat => stat.office + stat.home_office + stat.corporate_travel + stat.day_off + stat.vacation > 0);
   }, [teamProfiles, locations]);
 
   // Early returns AFTER all hooks
@@ -247,6 +251,7 @@ export default function Charts() {
                       <Legend formatter={(value) => statusLabels[value] || value} />
                       <Bar dataKey="office" stackId="a" fill={COLORS.office} />
                       <Bar dataKey="home_office" stackId="a" fill={COLORS.home_office} />
+                      <Bar dataKey="corporate_travel" stackId="a" fill={COLORS.corporate_travel} />
                       <Bar dataKey="day_off" stackId="a" fill={COLORS.day_off} />
                       <Bar dataKey="vacation" stackId="a" fill={COLORS.vacation} />
                     </BarChart>

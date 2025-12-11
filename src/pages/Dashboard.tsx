@@ -6,7 +6,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Building2, Home, Coffee, Plane, CalendarDays, Calendar } from 'lucide-react';
+import { Loader2, Building2, Home, Coffee, Plane, Briefcase, CalendarDays, Calendar } from 'lucide-react';
 import { WeeklyView } from '@/components/weekly';
 import { MonthlyView } from '@/components/monthly';
 import { useLocations, LocationStatus } from '@/hooks/useLocations';
@@ -43,6 +43,7 @@ export default function Dashboard() {
   const todayStats = {
     office: 0,
     home_office: 0,
+    corporate_travel: 0,
     day_off: 0,
     vacation: 0,
   };
@@ -74,6 +75,14 @@ export default function Dashboard() {
       color: 'text-blue-600 dark:text-blue-400',
       bg: 'bg-blue-100 dark:bg-blue-900/30',
       status: 'home_office' as LocationStatus,
+    },
+    {
+      title: 'Viagem Corporativa',
+      value: todayStats.corporate_travel.toString(),
+      icon: Briefcase,
+      color: 'text-cyan-600 dark:text-cyan-400',
+      bg: 'bg-cyan-100 dark:bg-cyan-900/30',
+      status: 'corporate_travel' as LocationStatus,
     },
     {
       title: 'Day Off',
@@ -129,7 +138,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {stats.map((stat) => (
             <Card
               key={stat.title}

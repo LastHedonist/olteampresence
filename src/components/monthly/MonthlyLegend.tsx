@@ -1,9 +1,10 @@
-import { Building2, Home, Coffee, Plane } from 'lucide-react';
+import { Building2, Home, Coffee, Plane, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const LEGEND_ITEMS = [
   { status: 'office', label: 'Escritório', color: 'bg-emerald-500', icon: Building2 },
   { status: 'home_office', label: 'Home Office', color: 'bg-blue-500', icon: Home },
+  { status: 'corporate_travel', label: 'Viagem Corporativa', color: 'bg-cyan-500', icon: Briefcase },
   { status: 'day_off', label: 'Day Off', color: 'bg-amber-500', icon: Coffee },
   { status: 'vacation', label: 'Férias', color: 'bg-purple-500', icon: Plane },
 ];

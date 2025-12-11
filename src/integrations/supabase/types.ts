@@ -131,7 +131,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "employee"
-      location_status: "office" | "home_office" | "day_off" | "vacation"
+      location_status:
+        | "office"
+        | "home_office"
+        | "day_off"
+        | "vacation"
+        | "corporate_travel"
       resource_group: "head" | "lead" | "equipe"
     }
     CompositeTypes: {
@@ -261,7 +266,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "employee"],
-      location_status: ["office", "home_office", "day_off", "vacation"],
+      location_status: [
+        "office",
+        "home_office",
+        "day_off",
+        "vacation",
+        "corporate_travel",
+      ],
       resource_group: ["head", "lead", "equipe"],
     },
   },

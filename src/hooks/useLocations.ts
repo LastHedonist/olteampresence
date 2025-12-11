@@ -5,7 +5,7 @@ import { format, startOfWeek, endOfWeek, addWeeks, eachDayOfInterval } from 'dat
 import { toast } from 'sonner';
 import { validateNotes } from '@/lib/validation';
 
-export type LocationStatus = 'office' | 'home_office' | 'day_off' | 'vacation';
+export type LocationStatus = 'office' | 'home_office' | 'corporate_travel' | 'day_off' | 'vacation';
 
 export interface Location {
   id: string;
@@ -186,6 +186,12 @@ export function getStatusConfig(status: LocationStatus) {
       color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
       icon: 'Home',
     },
+    corporate_travel: {
+      label: 'Viagem Corporativa',
+      shortLabel: 'Viagem',
+      color: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
+      icon: 'Briefcase',
+    },
     day_off: {
       label: 'Day Off',
       shortLabel: 'Folga',
@@ -205,6 +211,7 @@ export function getStatusConfig(status: LocationStatus) {
 export const STATUS_OPTIONS: { value: LocationStatus; label: string }[] = [
   { value: 'office', label: 'Escritório' },
   { value: 'home_office', label: 'Home Office' },
+  { value: 'corporate_travel', label: 'Viagem Corporativa' },
   { value: 'day_off', label: 'Day Off' },
   { value: 'vacation', label: 'Férias' },
 ];

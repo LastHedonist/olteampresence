@@ -3,7 +3,7 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { UserWithLocations, LocationStatus, getStatusConfig } from '@/hooks/useLocations';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Building2, Home, Coffee, Plane } from 'lucide-react';
+import { Building2, Home, Coffee, Plane, Briefcase } from 'lucide-react';
 
 interface MonthlyCalendarProps {
   monthDays: Date[];
@@ -14,6 +14,7 @@ interface MonthlyCalendarProps {
 const STATUS_COLORS: Record<LocationStatus, string> = {
   office: 'bg-emerald-500',
   home_office: 'bg-blue-500',
+  corporate_travel: 'bg-cyan-500',
   day_off: 'bg-amber-500',
   vacation: 'bg-purple-500',
 };
@@ -21,6 +22,7 @@ const STATUS_COLORS: Record<LocationStatus, string> = {
 const STATUS_ICONS: Record<LocationStatus, React.ComponentType<{ className?: string }>> = {
   office: Building2,
   home_office: Home,
+  corporate_travel: Briefcase,
   day_off: Coffee,
   vacation: Plane,
 };
@@ -36,6 +38,7 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
     const stats: Record<LocationStatus, number> = {
       office: 0,
       home_office: 0,
+      corporate_travel: 0,
       day_off: 0,
       vacation: 0,
     };
