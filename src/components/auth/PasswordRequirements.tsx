@@ -20,13 +20,18 @@ interface RequirementProps {
 function Requirement({ met, label }: RequirementProps) {
   return (
     <div className="flex items-center gap-2 text-sm">
-      {met ? (
-        <Check className="h-4 w-4 text-emerald-500" />
-      ) : (
-        <X className="h-4 w-4 text-muted-foreground" />
-      )}
+      <div className="relative h-4 w-4">
+        <Check className={cn(
+          "h-4 w-4 text-emerald-500 absolute inset-0 transition-all duration-300",
+          met ? "opacity-100 scale-100" : "opacity-0 scale-75"
+        )} />
+        <X className={cn(
+          "h-4 w-4 text-muted-foreground absolute inset-0 transition-all duration-300",
+          met ? "opacity-0 scale-75" : "opacity-100 scale-100"
+        )} />
+      </div>
       <span className={cn(
-        "transition-colors",
+        "transition-colors duration-300",
         met ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
       )}>
         {label}
