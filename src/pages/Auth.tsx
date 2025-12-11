@@ -13,6 +13,7 @@ import { z } from 'zod';
 import overlabsLogo from '@/assets/overlabs-logo.png';
 import { PasswordRequirements } from '@/components/auth/PasswordRequirements';
 import { EmailValidation } from '@/components/auth/EmailValidation';
+import { PasswordMatchValidation } from '@/components/auth/PasswordMatchValidation';
 
 const emailSchema = z.string().email('Email inválido');
 const passwordSchema = z.string()
@@ -415,6 +416,10 @@ export default function Auth() {
                     onChange={(e) => setRegisterConfirmPassword(e.target.value)}
                     required
                     disabled={isLoading}
+                  />
+                  <PasswordMatchValidation 
+                    password={registerPassword} 
+                    confirmPassword={registerConfirmPassword} 
                   />
                 </div>
 
