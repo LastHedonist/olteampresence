@@ -1,4 +1,4 @@
-import { Building2, Home, Coffee, Plane, Plus, Clock } from 'lucide-react';
+import { Building2, Home, Coffee, Plane, Plus, Clock, Briefcase } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +21,7 @@ interface LocationCellProps {
 const iconMap = {
   Building2,
   Home,
+  Briefcase,
   Coffee,
   Plane,
 };
