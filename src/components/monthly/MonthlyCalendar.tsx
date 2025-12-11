@@ -27,10 +27,11 @@ const STATUS_ICONS: Record<LocationStatus, React.ComponentType<{ className?: str
   vacation: Plane,
 };
 
-const WEEKDAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const WEEKDAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 
 export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: MonthlyCalendarProps) {
-  const firstDayOfMonth = getDay(startOfMonth(monthStart));
+  // Adjust for Monday as first day: (getDay() + 6) % 7 converts Sunday=0 to 6, Monday=1 to 0, etc.
+  const firstDayOfMonth = (getDay(startOfMonth(monthStart)) + 6) % 7;
   const emptyDays = Array(firstDayOfMonth).fill(null);
 
   const getStatsForDay = (date: Date) => {
