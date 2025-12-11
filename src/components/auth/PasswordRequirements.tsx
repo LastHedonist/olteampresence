@@ -1,5 +1,6 @@
 import { Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Progress } from '@/components/ui/progress';
 
 interface PasswordRequirementsProps {
   password: string;
@@ -28,6 +29,14 @@ function Requirement({ met, label }: RequirementProps) {
   );
 }
 
+function getStrengthInfo(metCount: number): { label: string; color: string; progressColor: string } {
+  if (metCount === 0) return { label: '', color: 'text-muted-foreground', progressColor: 'bg-muted' };
+  if (metCount <= 1) return { label: 'Fraca', color: 'text-destructive', progressColor: 'bg-destructive' };
+  if (metCount <= 2) return { label: 'Média', color: 'text-amber-500', progressColor: 'bg-amber-500' };
+  if (metCount <= 3) return { label: 'Boa', color: 'text-emerald-500', progressColor: 'bg-emerald-500' };
+  return { label: 'Forte', color: 'text-emerald-600', progressColor: 'bg-emerald-600' };
+}
+
 export function PasswordRequirements({ password }: PasswordRequirementsProps) {
   const requirements = [
     { met: password.length >= 8, label: '8 caracteres no mínimo' },
@@ -36,11 +45,31 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
     { met: /[0-9]/.test(password), label: 'Número' },
   ];
 
+  const metCount = requirements.filter(r => r.met).length;
+  const strengthPercent = (metCount / requirements.length) * 100;
+  const { label, color, progressColor } = getStrengthInfo(metCount);
+
   return (
-    <div className="space-y-1.5 rounded-md bg-muted/50 p-3">
-      {requirements.map((req, index) => (
-        <Requirement key={index} met={req.met} label={req.label} />
-      ))}
+    <div className="space-y-3 rounded-md bg-muted/50 p-3">
+      {password.length > 0 && (
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">Força da senha</span>
+            <span className={cn("font-medium transition-colors", color)}>{label}</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+            <div 
+              className={cn("h-full transition-all duration-300", progressColor)}
+              style={{ width: `${strengthPercent}%` }}
+            />
+          </div>
+        </div>
+      )}
+      <div className="space-y-1.5">
+        {requirements.map((req, index) => (
+          <Requirement key={index} met={req.met} label={req.label} />
+        ))}
+      </div>
     </div>
   );
 }
