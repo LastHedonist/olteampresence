@@ -103,12 +103,12 @@ export function WeeklyTable({
                   )}
                 >
                   <div className="flex flex-col items-center gap-1">
-                    <span className="text-xs font-normal text-muted-foreground capitalize">
+                    <span className="text-sm font-medium text-muted-foreground capitalize">
                       {format(day, 'EEE', { locale: ptBR })}
                     </span>
                     <span
                       className={cn(
-                        'text-sm font-medium',
+                        'text-base font-semibold',
                         isToday(day) && 'rounded-full bg-primary px-2 py-0.5 text-primary-foreground'
                       )}
                     >
