@@ -98,10 +98,10 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
             <div
               key={day.toISOString()}
               className={cn(
-                'relative flex aspect-square flex-col rounded-lg border p-1 transition-colors',
+                'relative flex aspect-square flex-col rounded-lg border border-border p-1 transition-colors',
                 today
                   ? 'border-primary bg-primary/5'
-                  : 'border-transparent hover:border-border hover:bg-muted/30'
+                  : 'hover:bg-muted/30'
               )}
             >
               {/* Day number */}
