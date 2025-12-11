@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -44,6 +44,20 @@ export default function Auth() {
 
   // Forgot password form
   const [resetEmail, setResetEmail] = useState('');
+
+  // Register form validation
+  const isRegisterFormValid = useMemo(() => {
+    const isNameValid = registerName.trim().length >= 2;
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail);
+    const isPasswordValid = 
+      registerPassword.length >= 8 &&
+      /[a-z]/.test(registerPassword) &&
+      /[A-Z]/.test(registerPassword) &&
+      /[0-9]/.test(registerPassword);
+    const doPasswordsMatch = registerPassword === registerConfirmPassword && registerPassword.length > 0;
+    
+    return isNameValid && isEmailValid && isPasswordValid && doPasswordsMatch;
+  }, [registerName, registerEmail, registerPassword, registerConfirmPassword]);
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -423,7 +437,7 @@ export default function Auth() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isLoading || !isRegisterFormValid}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
