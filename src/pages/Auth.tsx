@@ -12,6 +12,7 @@ import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import overlabsLogo from '@/assets/overlabs-logo.png';
 import { PasswordRequirements } from '@/components/auth/PasswordRequirements';
+import { EmailValidation } from '@/components/auth/EmailValidation';
 
 const emailSchema = z.string().email('Email inválido');
 const passwordSchema = z.string()
@@ -372,6 +373,7 @@ export default function Auth() {
                     required
                     disabled={isLoading}
                   />
+                  <EmailValidation email={registerEmail} />
                 </div>
                 
                 <div className="space-y-2">
