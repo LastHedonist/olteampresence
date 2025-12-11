@@ -142,15 +142,15 @@ export default function Dashboard() {
           {stats.map((stat) => (
             <Card
               key={stat.title}
-              className="cursor-pointer transition-shadow hover:shadow-md"
+              className="group cursor-pointer transition-shadow hover:shadow-md"
               onClick={() => setSelectedStatus(stat.status)}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <div className={`rounded-lg p-2.5 ${stat.bg}`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                <div className={`rounded-lg p-2.5 ${stat.bg} transition-transform duration-200 group-hover:scale-110`}>
+                  <stat.icon className={`h-6 w-6 ${stat.color} transition-transform duration-200 group-hover:rotate-12`} />
                 </div>
               </CardHeader>
               <CardContent>
