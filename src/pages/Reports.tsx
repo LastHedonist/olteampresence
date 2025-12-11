@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { format, startOfMonth, endOfMonth, subMonths, eachDayOfInterval, isWeekend } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Building2, Home, Coffee, Palmtree, Loader2, FileDown } from 'lucide-react';
+import { Building2, Home, Coffee, Palmtree, Briefcase, Loader2, FileDown } from 'lucide-react';
 
 interface TeamProfile {
   id: string;
@@ -23,7 +23,7 @@ interface TeamProfile {
 interface LocationData {
   user_id: string;
   date: string;
-  status: 'office' | 'home_office' | 'day_off' | 'vacation';
+  status: 'office' | 'home_office' | 'corporate_travel' | 'day_off' | 'vacation';
 }
 
 interface UserStats {
@@ -31,6 +31,7 @@ interface UserStats {
   name: string;
   office: number;
   homeOffice: number;
+  corporateTravel: number;
   dayOff: number;
   vacation: number;
   total: number;
@@ -39,6 +40,7 @@ interface UserStats {
 const statusLabels: Record<string, string> = {
   office: 'Escritório',
   home_office: 'Home Office',
+  corporate_travel: 'Viagem Corporativa',
   day_off: 'Day Off',
   vacation: 'Férias',
 };
@@ -46,6 +48,7 @@ const statusLabels: Record<string, string> = {
 const statusColors: Record<string, string> = {
   office: 'bg-emerald-500',
   home_office: 'bg-blue-500',
+  corporate_travel: 'bg-cyan-500',
   day_off: 'bg-amber-500',
   vacation: 'bg-purple-500',
 };
@@ -119,6 +122,7 @@ export default function Reports() {
         name: profile.full_name,
         office: 0,
         homeOffice: 0,
+        corporateTravel: 0,
         dayOff: 0,
         vacation: 0,
         total: userLocations.length,
@@ -131,6 +135,9 @@ export default function Reports() {
             break;
           case 'home_office':
             stats.homeOffice++;
+            break;
+          case 'corporate_travel':
+            stats.corporateTravel++;
             break;
           case 'day_off':
             stats.dayOff++;
@@ -150,20 +157,22 @@ export default function Reports() {
       (acc, stat) => ({
         office: acc.office + stat.office,
         homeOffice: acc.homeOffice + stat.homeOffice,
+        corporateTravel: acc.corporateTravel + stat.corporateTravel,
         dayOff: acc.dayOff + stat.dayOff,
         vacation: acc.vacation + stat.vacation,
         total: acc.total + stat.total,
       }),
-      { office: 0, homeOffice: 0, dayOff: 0, vacation: 0, total: 0 }
+      { office: 0, homeOffice: 0, corporateTravel: 0, dayOff: 0, vacation: 0, total: 0 }
     );
   }, [userStats]);
 
   const handleExportCSV = () => {
-    const headers = ['Recurso', 'Escritório', 'Home Office', 'Day Off', 'Férias', 'Total Registros'];
+    const headers = ['Recurso', 'Escritório', 'Home Office', 'Viagem Corporativa', 'Day Off', 'Férias', 'Total Registros'];
     const rows = userStats.map(stat => [
       stat.name,
       stat.office,
       stat.homeOffice,
+      stat.corporateTravel,
       stat.dayOff,
       stat.vacation,
       stat.total,
@@ -230,7 +239,7 @@ export default function Reports() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Escritório</CardTitle>
@@ -251,6 +260,19 @@ export default function Reports() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totals.homeOffice}</div>
+              <p className="text-xs text-muted-foreground">
+                dias registrados
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Viagem Corp.</CardTitle>
+              <Briefcase className="h-4 w-4 text-cyan-500" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{totals.corporateTravel}</div>
               <p className="text-xs text-muted-foreground">
                 dias registrados
               </p>
@@ -305,6 +327,7 @@ export default function Reports() {
                       <TableHead>Recurso</TableHead>
                       <TableHead className="text-center">Escritório</TableHead>
                       <TableHead className="text-center">Home Office</TableHead>
+                      <TableHead className="text-center">Viagem Corp.</TableHead>
                       <TableHead className="text-center">Day Off</TableHead>
                       <TableHead className="text-center">Férias</TableHead>
                       <TableHead className="text-center">Total</TableHead>
@@ -313,7 +336,7 @@ export default function Reports() {
                   <TableBody>
                     {userStats.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground">
+                        <TableCell colSpan={7} className="text-center text-muted-foreground">
                           Nenhum dado encontrado para o período selecionado
                         </TableCell>
                       </TableRow>
@@ -329,6 +352,11 @@ export default function Reports() {
                           <TableCell className="text-center">
                             <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20">
                               {stat.homeOffice}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="outline" className="bg-cyan-500/10 text-cyan-600 border-cyan-500/20">
+                              {stat.corporateTravel}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-center">
