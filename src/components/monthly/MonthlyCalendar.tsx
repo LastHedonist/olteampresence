@@ -85,7 +85,7 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
       <div className="grid grid-cols-7 gap-1">
         {/* Empty cells for days before month starts */}
         {emptyDays.map((_, index) => (
-          <div key={`empty-${index}`} className="aspect-square" />
+          <div key={`empty-${index}`} className="aspect-[4/3]" />
         ))}
 
         {/* Month days */}
@@ -98,7 +98,7 @@ export function MonthlyCalendar({ monthDays, allUsersLocations, monthStart }: Mo
             <div
               key={day.toISOString()}
               className={cn(
-                'relative flex aspect-square flex-col rounded-lg border border-border p-1 transition-colors',
+                'relative flex aspect-[4/3] flex-col rounded-lg border border-border p-1 transition-colors',
                 today
                   ? 'border-primary bg-primary/5'
                   : 'hover:bg-muted/30'
