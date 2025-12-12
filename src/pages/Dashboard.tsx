@@ -11,6 +11,7 @@ import { WeeklyView } from '@/components/weekly';
 import { MonthlyView } from '@/components/monthly';
 import { useLocations, LocationStatus } from '@/hooks/useLocations';
 import { StatusEmployeesDialog } from '@/components/dashboard/StatusEmployeesDialog';
+import { OfficePresenceCard } from '@/components/dashboard/OfficePresenceCard';
 import { format } from 'date-fns';
 
 export default function Dashboard() {
@@ -167,6 +168,9 @@ export default function Dashboard() {
           status={selectedStatus}
           employees={selectedStatus ? getEmployeesForStatus(selectedStatus) : []}
         />
+
+        {/* Office Presence Card */}
+        <OfficePresenceCard />
 
         {/* Views Tabs */}
         <Tabs defaultValue="weekly" className="w-full">
