@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useLocations } from '@/hooks/useLocations';
 import { useOfficeCheckins, CheckinStatus } from '@/hooks/useOfficeCheckins';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface OfficeUser {
   id: string;
@@ -26,26 +27,28 @@ const getInitials = (name: string) => {
 };
 
 const CheckinStatusBadge = ({ status }: { status: CheckinStatus }) => {
+  const { t } = useLanguage();
+  
   switch (status) {
     case 'validated':
       return (
         <Badge variant="default" className="gap-1 bg-emerald-600 hover:bg-emerald-700">
           <CheckCircle2 className="h-3 w-3" />
-          Validado
+          {t.dashboard.validated}
         </Badge>
       );
     case 'pending':
       return (
         <Badge variant="secondary" className="gap-1 bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400">
           <Clock className="h-3 w-3" />
-          Pendente
+          {t.dashboard.pending}
         </Badge>
       );
     default:
       return (
         <Badge variant="outline" className="gap-1 text-muted-foreground">
           <Circle className="h-3 w-3" />
-          Sem check-in
+          {t.dashboard.noCheckin}
         </Badge>
       );
   }
@@ -55,6 +58,7 @@ export function OfficePresenceCard() {
   const today = format(new Date(), 'yyyy-MM-dd');
   const { allUsersLocations } = useLocations(0);
   const { getCheckinStatus } = useOfficeCheckins(today, today);
+  const { t } = useLanguage();
 
   // Get users who are in the office today
   const officeUsers: OfficeUser[] = allUsersLocations
@@ -76,14 +80,14 @@ export function OfficePresenceCard() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-semibold">No Escritório Hoje</CardTitle>
+        <CardTitle className="text-base font-semibold">{t.dashboard.officeToday}</CardTitle>
         <div className="rounded-lg bg-emerald-100 p-2 dark:bg-emerald-900/30">
           <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
         </div>
       </CardHeader>
       <CardContent>
         {officeUsers.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Ninguém no escritório hoje.</p>
+          <p className="text-sm text-muted-foreground">{t.dashboard.noOneInOffice}</p>
         ) : (
           <ScrollArea className="h-[280px] pr-4">
             <div className="space-y-3">
