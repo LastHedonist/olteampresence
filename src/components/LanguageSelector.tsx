@@ -1,13 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Language, languageFlags } from '@/translations';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Globe } from 'lucide-react';
+import { useState } from 'react';
 
 const languages: { code: Language; label: string; flag: string }[] = [
   { code: 'pt', label: 'Português', flag: languageFlags.pt },
@@ -17,26 +10,41 @@ const languages: { code: Language; label: string; flag: string }[] = [
 
 export function LanguageSelector() {
   const { language, setLanguage } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const currentLanguage = languages.find((l) => l.code === language);
+  const otherLanguages = languages.filter((l) => l.code !== language);
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-9 w-9">
-          <Globe className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {languages.map((lang) => (
-          <DropdownMenuItem
-            key={lang.code}
-            onClick={() => setLanguage(lang.code)}
-            className={language === lang.code ? 'bg-accent' : ''}
-          >
-            <span className="mr-2">{lang.flag}</span>
-            {lang.label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div
+      className="relative"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        className="flex items-center justify-center h-9 w-9 rounded-md hover:bg-accent transition-colors text-xl"
+        aria-label="Select language"
+      >
+        {currentLanguage?.flag}
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-1 bg-popover border border-border rounded-md shadow-md py-1 min-w-[120px] z-50">
+          {otherLanguages.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => {
+                setLanguage(lang.code);
+                setIsOpen(false);
+              }}
+              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-accent transition-colors"
+            >
+              <span className="text-lg">{lang.flag}</span>
+              {lang.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
