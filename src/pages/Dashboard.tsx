@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { isWeekend } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,7 @@ import { format } from 'date-fns';
 
 export default function Dashboard() {
   const { user, profile, isLoading, isAdmin } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<LocationStatus | null>(null);
@@ -62,7 +64,7 @@ export default function Dashboard() {
 
   const stats = [
     {
-      title: 'No Escritório Hoje',
+      title: t.dashboard.officeToday,
       value: todayStats.office.toString(),
       icon: Building2,
       color: 'text-emerald-600 dark:text-emerald-400',
@@ -70,7 +72,7 @@ export default function Dashboard() {
       status: 'office' as LocationStatus,
     },
     {
-      title: 'Home Office',
+      title: t.dashboard.homeOffice,
       value: todayStats.home_office.toString(),
       icon: Home,
       color: 'text-blue-600 dark:text-blue-400',
@@ -78,7 +80,7 @@ export default function Dashboard() {
       status: 'home_office' as LocationStatus,
     },
     {
-      title: 'Viagem Corporativa',
+      title: t.dashboard.corporateTravel,
       value: todayStats.corporate_travel.toString(),
       icon: Briefcase,
       color: 'text-cyan-600 dark:text-cyan-400',
@@ -86,7 +88,7 @@ export default function Dashboard() {
       status: 'corporate_travel' as LocationStatus,
     },
     {
-      title: 'Day Off',
+      title: t.dashboard.dayOff,
       value: todayStats.day_off.toString(),
       icon: Coffee,
       color: 'text-amber-600 dark:text-amber-400',
@@ -94,7 +96,7 @@ export default function Dashboard() {
       status: 'day_off' as LocationStatus,
     },
     {
-      title: 'Férias',
+      title: t.dashboard.vacation,
       value: todayStats.vacation.toString(),
       icon: Plane,
       color: 'text-purple-600 dark:text-purple-400',
@@ -124,17 +126,17 @@ export default function Dashboard() {
         {/* Welcome Header */}
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Olá, {profile?.full_name?.split(' ')[0] || 'Usuário'}! 👋
+            {t.dashboard.welcome}, {profile?.full_name?.split(' ')[0] || 'User'}! 👋
           </h1>
           <p className="text-muted-foreground">
-            Gerencie sua disponibilidade e veja quem está no escritório.
+            {t.dashboard.subtitle}
           </p>
         </div>
 
         {/* Role Badge */}
         <div className="flex items-center gap-2">
           <Badge variant={isAdmin ? 'default' : 'secondary'}>
-            {isAdmin ? 'Administrador' : 'Recurso'}
+            {isAdmin ? t.dashboard.administrator : t.dashboard.resource}
           </Badge>
         </div>
 
@@ -177,11 +179,11 @@ export default function Dashboard() {
           <TabsList className="mb-4">
             <TabsTrigger value="weekly" className="flex items-center gap-2">
               <CalendarDays className="h-4 w-4" />
-              Semanal
+              {t.dashboard.weekly}
             </TabsTrigger>
             <TabsTrigger value="monthly" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Mensal
+              {t.dashboard.monthly}
             </TabsTrigger>
           </TabsList>
 

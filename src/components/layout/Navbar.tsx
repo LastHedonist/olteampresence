@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import overlabsLogo from '@/assets/overlabs-logo.png';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 interface NavbarProps {
   onSearch?: (query: string) => void;
@@ -32,6 +34,7 @@ interface NavbarProps {
 
 export function Navbar({ onSearch }: NavbarProps) {
   const { user, profile, isAdmin, signOut } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -80,7 +83,7 @@ export function Navbar({ onSearch }: NavbarProps) {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Buscar recurso..."
+                placeholder={t.navbar.searchPlaceholder}
                 value={searchQuery}
                 onChange={handleSearch}
                 className="pl-10 bg-background"
@@ -89,27 +92,29 @@ export function Navbar({ onSearch }: NavbarProps) {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-2 md:flex">
             <Button variant="ghost" size="sm" asChild>
               <Link to="/reports">
                 <BarChart3 className="mr-2 h-4 w-4" />
-                Relatórios
+                {t.navbar.reports}
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
               <Link to="/charts">
                 <PieChart className="mr-2 h-4 w-4" />
-                Gráficos
+                {t.navbar.charts}
               </Link>
             </Button>
             {isAdmin && (
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/admin">
                   <Users className="mr-2 h-4 w-4" />
-                  Admin
+                  {t.navbar.admin}
                 </Link>
               </Button>
             )}
+
+            <LanguageSelector />
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -134,18 +139,18 @@ export function Navbar({ onSearch }: NavbarProps) {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <User className="mr-2 h-4 w-4" />
-                  <span>Perfil</span>
+                  <span>{t.navbar.profile}</span>
                 </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem onClick={() => navigate('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Configurações</span>
+                    <span>{t.navbar.settings}</span>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sair</span>
+                  <span>{t.navbar.signOut}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -179,7 +184,7 @@ export function Navbar({ onSearch }: NavbarProps) {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Buscar recurso..."
+                placeholder={t.navbar.searchPlaceholder}
                 value={searchQuery}
                 onChange={handleSearch}
                 className="pl-10 bg-background"
@@ -191,40 +196,43 @@ export function Navbar({ onSearch }: NavbarProps) {
               <Button variant="ghost" className="justify-start" asChild>
                 <Link to="/reports">
                   <BarChart3 className="mr-2 h-4 w-4" />
-                  Relatórios
+                  {t.navbar.reports}
                 </Link>
               </Button>
               <Button variant="ghost" className="justify-start" asChild>
                 <Link to="/charts">
                   <PieChart className="mr-2 h-4 w-4" />
-                  Gráficos
+                  {t.navbar.charts}
                 </Link>
               </Button>
               {isAdmin && (
                 <Button variant="ghost" className="justify-start" asChild>
                   <Link to="/admin">
                     <Users className="mr-2 h-4 w-4" />
-                    Admin
+                    {t.navbar.admin}
                   </Link>
                 </Button>
               )}
               <Button variant="ghost" className="justify-start" onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>
                 <User className="mr-2 h-4 w-4" />
-                Perfil
+                {t.navbar.profile}
               </Button>
               {isAdmin && (
                 <Button variant="ghost" className="justify-start" onClick={() => { navigate('/settings'); setIsMobileMenuOpen(false); }}>
                   <Settings className="mr-2 h-4 w-4" />
-                  Configurações
+                  {t.navbar.settings}
                 </Button>
               )}
+              <div className="flex items-center gap-2 px-4 py-2">
+                <LanguageSelector />
+              </div>
               <Button
                 variant="ghost"
                 className="justify-start text-destructive"
                 onClick={handleSignOut}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                Sair
+                {t.navbar.signOut}
               </Button>
             </div>
           </div>
