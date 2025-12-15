@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
@@ -14,6 +15,7 @@ import overlabsLogo from '@/assets/overlabs-logo.png';
 import { PasswordRequirements } from '@/components/auth/PasswordRequirements';
 import { EmailValidation } from '@/components/auth/EmailValidation';
 import { PasswordMatchValidation } from '@/components/auth/PasswordMatchValidation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const emailSchema = z.string().email('Email inválido');
 const passwordSchema = z.string()
@@ -23,9 +25,13 @@ const passwordSchema = z.string()
   .regex(/[0-9]/, 'Senha deve conter pelo menos um número');
 const nameSchema = z.string().min(2, 'Nome deve ter pelo menos 2 caracteres');
 
+const countries = ['argentina', 'brasil', 'chile', 'colombia', 'eua'] as const;
+type Country = typeof countries[number];
+
 export default function Auth() {
   const navigate = useNavigate();
   const { signIn, signUp, user, isLoading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +45,7 @@ export default function Auth() {
   // Register form
   const [registerName, setRegisterName] = useState('');
   const [registerEmail, setRegisterEmail] = useState('');
+  const [registerCountry, setRegisterCountry] = useState<Country | ''>('');
   const [registerPassword, setRegisterPassword] = useState('');
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState('');
 
@@ -49,6 +56,7 @@ export default function Auth() {
   const isRegisterFormValid = useMemo(() => {
     const isNameValid = registerName.trim().length >= 2;
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail);
+    const isCountryValid = registerCountry !== '';
     const isPasswordValid = 
       registerPassword.length >= 8 &&
       /[a-z]/.test(registerPassword) &&
@@ -56,8 +64,8 @@ export default function Auth() {
       /[0-9]/.test(registerPassword);
     const doPasswordsMatch = registerPassword === registerConfirmPassword && registerPassword.length > 0;
     
-    return isNameValid && isEmailValid && isPasswordValid && doPasswordsMatch;
-  }, [registerName, registerEmail, registerPassword, registerConfirmPassword]);
+    return isNameValid && isEmailValid && isCountryValid && isPasswordValid && doPasswordsMatch;
+  }, [registerName, registerEmail, registerCountry, registerPassword, registerConfirmPassword]);
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -139,7 +147,7 @@ export default function Auth() {
     if (!validateRegisterForm()) return;
 
     setIsLoading(true);
-    const { error } = await signUp(registerEmail, registerPassword, registerName);
+    const { error } = await signUp(registerEmail, registerPassword, registerName, registerCountry);
     setIsLoading(false);
 
     if (error) {
@@ -230,17 +238,17 @@ export default function Auth() {
               onClick={() => setShowForgotPassword(false)}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
+              {t.common.back}
             </Button>
-            <CardTitle>Recuperar senha</CardTitle>
+            <CardTitle>{t.auth.resetPassword}</CardTitle>
             <CardDescription>
-              Digite seu email para receber um link de recuperação de senha.
+              {t.auth.sendResetLink}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleForgotPassword} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="reset-email">Email</Label>
+                <Label htmlFor="reset-email">{t.auth.email}</Label>
                 <Input
                   id="reset-email"
                   type="email"
@@ -256,10 +264,10 @@ export default function Auth() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Enviando...
+                    {t.common.loading}
                   </>
                 ) : (
-                  'Enviar link de recuperação'
+                  t.auth.sendResetLink
                 )}
               </Button>
             </form>
@@ -289,8 +297,8 @@ export default function Auth() {
         <Tabs defaultValue="login" className="w-full">
           <CardHeader className="pb-4">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Entrar</TabsTrigger>
-              <TabsTrigger value="register">Registrar</TabsTrigger>
+              <TabsTrigger value="login">{t.auth.signIn}</TabsTrigger>
+              <TabsTrigger value="register">{t.auth.signUp}</TabsTrigger>
             </TabsList>
           </CardHeader>
 
@@ -299,7 +307,7 @@ export default function Auth() {
             <TabsContent value="login" className="mt-0">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
+                  <Label htmlFor="login-email">{t.auth.email}</Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -312,7 +320,7 @@ export default function Auth() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="login-password">Senha</Label>
+                  <Label htmlFor="login-password">{t.auth.password}</Label>
                   <div className="relative">
                     <Input
                       id="login-password"
@@ -345,17 +353,17 @@ export default function Auth() {
                   className="px-0 h-auto font-normal text-sm text-muted-foreground hover:text-primary"
                   onClick={() => setShowForgotPassword(true)}
                 >
-                  Esqueci minha senha
+                  {t.auth.forgotPassword}
                 </Button>
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Entrando...
+                      {t.common.loading}
                     </>
                   ) : (
-                    'Entrar'
+                    t.auth.signIn
                   )}
                 </Button>
               </form>
@@ -365,7 +373,7 @@ export default function Auth() {
             <TabsContent value="register" className="mt-0">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="register-name">Nome completo</Label>
+                  <Label htmlFor="register-name">{t.auth.fullName}</Label>
                   <Input
                     id="register-name"
                     type="text"
@@ -378,7 +386,7 @@ export default function Auth() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="register-email">Email</Label>
+                  <Label htmlFor="register-email">{t.auth.email}</Label>
                   <Input
                     id="register-email"
                     type="email"
@@ -390,9 +398,29 @@ export default function Auth() {
                   />
                   <EmailValidation email={registerEmail} />
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="register-country">{t.auth.country}</Label>
+                  <Select
+                    value={registerCountry}
+                    onValueChange={(value: Country) => setRegisterCountry(value)}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger id="register-country">
+                      <SelectValue placeholder={t.auth.selectCountry} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map((country) => (
+                        <SelectItem key={country} value={country}>
+                          {t.auth.countries[country]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="register-password">Senha</Label>
+                  <Label htmlFor="register-password">{t.auth.password}</Label>
                   <div className="relative">
                     <Input
                       id="register-password"
@@ -421,7 +449,7 @@ export default function Auth() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="register-confirm">Confirmar senha</Label>
+                  <Label htmlFor="register-confirm">{t.auth.confirmPassword}</Label>
                   <Input
                     id="register-confirm"
                     type="password"
@@ -441,10 +469,10 @@ export default function Auth() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Registrando...
+                      {t.common.loading}
                     </>
                   ) : (
-                    'Criar conta'
+                    t.auth.signUp
                   )}
                 </Button>
               </form>
