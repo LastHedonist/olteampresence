@@ -117,11 +117,11 @@ export const en: TranslationKeys = {
       eua: 'USA',
     },
     passwordRequirements: {
-      title: 'Password requirements',
-      minLength: 'Minimum 8 characters',
-      lowercase: 'One lowercase letter',
-      uppercase: 'One uppercase letter',
-      number: 'One number',
+      title: 'Password strength',
+      minLength: '8 characters minimum',
+      lowercase: 'Lowercase letter',
+      uppercase: 'Uppercase letter',
+      number: 'Number',
     },
     passwordStrength: {
       weak: 'Weak',

@@ -1,12 +1,12 @@
 import { Check, X, Info, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Progress } from '@/components/ui/progress';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface PasswordRequirementsProps {
   password: string;
@@ -40,20 +40,22 @@ function Requirement({ met, label }: RequirementProps) {
   );
 }
 
-function getStrengthInfo(metCount: number): { label: string; color: string; progressColor: string } {
-  if (metCount === 0) return { label: '', color: 'text-muted-foreground', progressColor: 'bg-muted' };
-  if (metCount <= 1) return { label: 'Fraca', color: 'text-destructive', progressColor: 'bg-destructive' };
-  if (metCount <= 2) return { label: 'Média', color: 'text-amber-500', progressColor: 'bg-amber-500' };
-  if (metCount <= 3) return { label: 'Boa', color: 'text-emerald-500', progressColor: 'bg-emerald-500' };
-  return { label: 'Forte', color: 'text-emerald-600', progressColor: 'bg-emerald-600' };
-}
-
 export function PasswordRequirements({ password }: PasswordRequirementsProps) {
+  const { t } = useLanguage();
+
+  const getStrengthInfo = (metCount: number): { label: string; color: string; progressColor: string } => {
+    if (metCount === 0) return { label: '', color: 'text-muted-foreground', progressColor: 'bg-muted' };
+    if (metCount <= 1) return { label: t.auth.passwordStrength.weak, color: 'text-destructive', progressColor: 'bg-destructive' };
+    if (metCount <= 2) return { label: t.auth.passwordStrength.medium, color: 'text-amber-500', progressColor: 'bg-amber-500' };
+    if (metCount <= 3) return { label: t.auth.passwordStrength.good, color: 'text-emerald-500', progressColor: 'bg-emerald-500' };
+    return { label: t.auth.passwordStrength.strong, color: 'text-emerald-600', progressColor: 'bg-emerald-600' };
+  };
+
   const requirements = [
-    { met: password.length >= 8, label: '8 caracteres no mínimo' },
-    { met: /[A-Z]/.test(password), label: 'Letra maiúscula' },
-    { met: /[a-z]/.test(password), label: 'Letra minúscula' },
-    { met: /[0-9]/.test(password), label: 'Número' },
+    { met: password.length >= 8, label: t.auth.passwordRequirements.minLength },
+    { met: /[A-Z]/.test(password), label: t.auth.passwordRequirements.uppercase },
+    { met: /[a-z]/.test(password), label: t.auth.passwordRequirements.lowercase },
+    { met: /[0-9]/.test(password), label: t.auth.passwordRequirements.number },
   ];
 
   const metCount = requirements.filter(r => r.met).length;
@@ -61,20 +63,22 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
   const strengthPercent = (metCount / requirements.length) * 100;
   const { label, color, progressColor } = getStrengthInfo(metCount);
 
+  const tooltipText = t.auth.passwordRequirements.title;
+
   return (
     <div className="space-y-3 rounded-md bg-muted/50 p-3 animate-fade-in">
       {password.length > 0 && (
         <div className="space-y-1.5 animate-fade-in">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">Força da senha</span>
+              <span className="text-muted-foreground">{t.auth.passwordRequirements.title}</span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[200px] text-center">
-                    <p className="text-xs">A força é calculada com base nos requisitos atendidos: maiúscula, minúscula, número e tamanho mínimo.</p>
+                    <p className="text-xs">{tooltipText}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -92,7 +96,7 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
       {allMet ? (
         <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 animate-fade-in">
           <ShieldCheck className="h-4 w-4" />
-          <span className="font-medium">Senha segura! Todos os requisitos foram atendidos.</span>
+          <span className="font-medium">{t.auth.passwordStrength.secure}</span>
         </div>
       ) : (
         <div className="space-y-1.5">
