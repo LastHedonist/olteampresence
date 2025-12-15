@@ -135,6 +135,7 @@ export const en: TranslationKeys = {
       passwordMismatch: 'Passwords do not match',
       weakPassword: 'Password does not meet requirements',
     },
+    tagline: 'Availability management system for hybrid teams',
   },
 
   // Profile

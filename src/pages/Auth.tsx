@@ -274,14 +274,14 @@ export default function Auth() {
           </CardContent>
         </Card>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Sistema de gestão de disponibilidade para equipes híbridas
-        </p>
-      </div>
-    );
-  }
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        {t.auth.tagline}
+      </p>
+    </div>
+  );
+}
 
-  return (
+return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
       {/* Logo */}
       <div className="mb-8 flex flex-col items-center">
@@ -482,7 +482,7 @@ export default function Auth() {
       </Card>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Sistema de gestão de disponibilidade para equipes híbridas
+        {t.auth.tagline}
       </p>
     </div>
   );
