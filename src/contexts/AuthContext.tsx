@@ -12,6 +12,7 @@ interface Profile {
   avatar_url: string | null;
   job_function: string;
   resource_group: ResourceGroup;
+  country: string | null;
 }
 
 interface AuthContextType {
