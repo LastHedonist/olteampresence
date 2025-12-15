@@ -133,6 +133,7 @@ export const pt = {
       passwordMismatch: 'As senhas não coincidem',
       weakPassword: 'Senha não atende aos requisitos',
     },
+    tagline: 'Sistema de gestão de disponibilidade para equipes híbridas',
   },
 
   // Profile

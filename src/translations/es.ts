@@ -135,6 +135,7 @@ export const es: TranslationKeys = {
       passwordMismatch: 'Las contraseñas no coinciden',
       weakPassword: 'La contraseña no cumple los requisitos',
     },
+    tagline: 'Sistema de gestión de disponibilidad para equipos híbridos',
   },
 
   // Profile
