@@ -16,12 +16,9 @@ export function LanguageSelector() {
   const otherLanguages = languages.filter((l) => l.code !== language);
 
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
+    <div className="relative">
       <button
+        onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-center h-9 w-9 rounded-md hover:bg-accent transition-colors text-xl"
         aria-label="Select language"
       >
