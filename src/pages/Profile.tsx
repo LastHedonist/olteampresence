@@ -34,6 +34,7 @@ type Country = typeof countries[number];
 const profileSchema = z.object({
   fullName: z.string().trim().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
   jobFunction: z.string().trim().min(1, 'Função é obrigatória').max(100, 'Função muito longa'),
+  country: z.enum(countries, { required_error: 'País é obrigatório' }),
 });
 
 export default function Profile() {
@@ -45,7 +46,7 @@ export default function Profile() {
   const [resourceGroup, setResourceGroup] = useState<ResourceGroup>('equipe');
   const [country, setCountry] = useState<Country | ''>('');
   const [isSaving, setIsSaving] = useState(false);
-  const [errors, setErrors] = useState<{ fullName?: string; jobFunction?: string }>({});
+  const [errors, setErrors] = useState<{ fullName?: string; jobFunction?: string; country?: string }>({});
 
   useEffect(() => {
     if (profile) {
@@ -85,12 +86,13 @@ export default function Profile() {
 
     setErrors({});
     
-    const result = profileSchema.safeParse({ fullName, jobFunction });
+    const result = profileSchema.safeParse({ fullName, jobFunction, country: country || undefined });
     if (!result.success) {
-      const fieldErrors: { fullName?: string; jobFunction?: string } = {};
+      const fieldErrors: { fullName?: string; jobFunction?: string; country?: string } = {};
       result.error.errors.forEach((err) => {
         if (err.path[0] === 'fullName') fieldErrors.fullName = err.message;
         if (err.path[0] === 'jobFunction') fieldErrors.jobFunction = err.message;
+        if (err.path[0] === 'country') fieldErrors.country = err.message;
       });
       setErrors(fieldErrors);
       return;
@@ -191,9 +193,9 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="country">{t.auth.country}</Label>
+                <Label htmlFor="country">{t.auth.country} *</Label>
                 <Select value={country} onValueChange={(value) => setCountry(value as Country)}>
-                  <SelectTrigger>
+                  <SelectTrigger className={errors.country ? 'border-destructive' : ''}>
                     <SelectValue placeholder={t.auth.selectCountry} />
                   </SelectTrigger>
                   <SelectContent>
@@ -204,6 +206,9 @@ export default function Profile() {
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.country && (
+                  <p className="text-xs text-destructive">{errors.country}</p>
+                )}
               </div>
 
               <div className="space-y-2">
