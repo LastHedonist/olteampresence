@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +28,9 @@ const RESOURCE_GROUP_LABELS: Record<ResourceGroup, string> = {
   equipe: 'Equipe',
 };
 
+const countries = ['argentina', 'brasil', 'chile', 'colombia', 'eua'] as const;
+type Country = typeof countries[number];
+
 const profileSchema = z.object({
   fullName: z.string().trim().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
   jobFunction: z.string().trim().min(1, 'Função é obrigatória').max(100, 'Função muito longa'),
@@ -34,10 +38,12 @@ const profileSchema = z.object({
 
 export default function Profile() {
   const { user, profile, isLoading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [fullName, setFullName] = useState('');
   const [jobFunction, setJobFunction] = useState('');
   const [resourceGroup, setResourceGroup] = useState<ResourceGroup>('equipe');
+  const [country, setCountry] = useState<Country | ''>('');
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<{ fullName?: string; jobFunction?: string }>({});
 
@@ -46,6 +52,7 @@ export default function Profile() {
       setFullName(profile.full_name || '');
       setJobFunction(profile.job_function || '');
       setResourceGroup((profile.resource_group as ResourceGroup) || 'equipe');
+      setCountry((profile.country as Country) || '');
     }
   }, [profile]);
 
@@ -96,18 +103,27 @@ export default function Profile() {
         .update({ 
           full_name: fullName.trim(),
           job_function: jobFunction.trim(),
+          country: country || null,
         })
         .eq('id', user.id);
 
       if (error) throw error;
 
-      toast.success('Perfil atualizado com sucesso!');
+      toast.success(t.profile.updateSuccess);
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast.error('Erro ao atualizar perfil');
+      toast.error(t.profile.updateError);
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const countryLabels: Record<Country, string> = {
+    argentina: t.auth.countries.argentina,
+    brasil: t.auth.countries.brasil,
+    chile: t.auth.countries.chile,
+    colombia: t.auth.countries.colombia,
+    eua: t.auth.countries.eua,
   };
 
   return (
@@ -118,7 +134,7 @@ export default function Profile() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Meu Perfil</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t.profile.title}</h1>
             <p className="text-muted-foreground">Gerencie suas informações pessoais</p>
           </div>
         </div>
@@ -147,7 +163,7 @@ export default function Profile() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Nome Completo *</Label>
+                <Label htmlFor="fullName">{t.profile.fullName} *</Label>
                 <Input
                   id="fullName"
                   value={fullName}
@@ -161,7 +177,7 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="jobFunction">Função *</Label>
+                <Label htmlFor="jobFunction">{t.profile.jobFunction} *</Label>
                 <Input
                   id="jobFunction"
                   value={jobFunction}
@@ -175,7 +191,23 @@ export default function Profile() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="resourceGroup">Grupo</Label>
+                <Label htmlFor="country">{t.auth.country}</Label>
+                <Select value={country} onValueChange={(value) => setCountry(value as Country)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t.auth.selectCountry} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {countryLabels[c]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="resourceGroup">{t.profile.resourceGroup}</Label>
                 <Input
                   id="resourceGroup"
                   value={RESOURCE_GROUP_LABELS[resourceGroup]}
@@ -183,12 +215,12 @@ export default function Profile() {
                   className="bg-muted"
                 />
                 <p className="text-xs text-muted-foreground">
-                  O grupo só pode ser alterado por um administrador.
+                  {t.profile.groupAdminOnly}
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t.profile.email}</Label>
                 <Input
                   id="email"
                   value={profile?.email || ''}
@@ -205,12 +237,12 @@ export default function Profile() {
               {isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Salvando...
+                  {t.common.loading}
                 </>
               ) : (
                 <>
                   <Save className="mr-2 h-4 w-4" />
-                  Salvar Alterações
+                  {t.common.save}
                 </>
               )}
             </Button>
